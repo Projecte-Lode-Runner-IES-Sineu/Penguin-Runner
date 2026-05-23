@@ -26,6 +26,7 @@ import java.util.List;
  */
 public class GameState {
 
+    private final List<BrokenBlock> brokenBlocks = new ArrayList<>();
     private final TileType[][] map;
     private final Player player;
     private final List<Enemy> enemies;
@@ -133,9 +134,11 @@ public class GameState {
      * 3. Es comproven col·lisions.
      */
     public void takeTurn(Direction direction) {
+        
         movePlayer(direction);
         collectGold();
         moveEnemies();
+        updateBrokenBlocks();
         checkCollisions();
     }
 
@@ -152,7 +155,7 @@ public class GameState {
         boolean hiHaGelDavall = isGel(actualRow + 1, actualCol);
         boolean estaDamuntPasarela = isPasarela(actualRow, actualCol);
         boolean estaEnLaEscala = isEscala(actualRow, actualCol);
-        boolean hiHaEscalaDavall = isEscala(actualRow+1, actualCol);
+        boolean hiHaEscalaDavall = isEscala(actualRow + 1, actualCol);
 
         // Si vol pujar, només pot fer-ho si està damunt una escala
         if (direction == Direction.UP) {
@@ -163,10 +166,31 @@ public class GameState {
         }
 
         // Per a la resta de direccions, aplica les regles normals
-        if (canMoveTo(nextRow, nextCol)
-                && (hiHaGelDavall || estaDamuntPasarela || estaEnLaEscala|| hiHaEscalaDavall)) {
+        if (canMoveTo(nextRow, nextCol)) {
             player.setPosition(nextRow, nextCol);
         }
+    }
+
+    /*
+       * Fa accions
+     */
+    public void breakDownLeft() {
+        breakBlock(player.getRow() + 1, player.getCol() - 1);
+    }
+
+    public void breakDownRight() {
+        breakBlock(player.getRow() + 1, player.getCol() + 1);
+    }
+
+    private void breakBlock(int row, int col) {
+        if (isOutOfBounds(row, col)) {
+            return;
+        }
+        if (map[row][col] == TileType.GEL) {
+            map[row][col] = TileType.RES;
+            brokenBlocks.add(new BrokenBlock(row, col, 5));
+        }
+
     }
 
     /*
@@ -259,9 +283,11 @@ public class GameState {
      * Comprova si algun enemic està a la mateixa casella que el jugador.
      */
     private void checkCollisions() {
+        int actualRow = player.getRow();
+        int actualCol = player.getCol();
         for (Enemy enemy : enemies) {
-            if (enemy.getRow() == player.getRow()
-                    && enemy.getCol() == player.getCol()) {
+            if ((enemy.getRow() == player.getRow()
+                    && enemy.getCol() == player.getCol()) || isGel(actualRow, actualCol)) {
 
                 resetPositions();
             }
@@ -301,5 +327,55 @@ public class GameState {
 
     public List<Enemy> getEnemies() {
         return enemies;
+    }
+
+    private static class BrokenBlock {
+
+        int row;
+        int col;
+        int turnsLeft;
+
+        BrokenBlock(int row, int col, int turnsLeft) {
+            this.row = row;
+            this.col = col;
+            this.turnsLeft = turnsLeft;
+        }
+    }
+    //actualitzar blocs
+    private void updateBrokenBlocks() {
+        for (int posicio = brokenBlocks.size() - 1; posicio >= 0; posicio--) {
+            BrokenBlock block = brokenBlocks.get(posicio);
+
+            block.turnsLeft--;
+
+            if (block.turnsLeft <= 0) {
+                map[block.row][block.col] = TileType.GEL;
+                brokenBlocks.remove(posicio);
+            }
+        }
+    }
+    //mira si caus
+    public boolean shouldDrop(){
+        int actualRow = player.getRow();
+        int actualCol = player.getCol();
+        
+        boolean hiHaGelDavall = isGel(actualRow + 1, actualCol);
+        boolean estaDamuntPasarela = isPasarela(actualRow, actualCol);
+        boolean estaEnLaEscala = isEscala(actualRow, actualCol);
+        boolean hiHaEscalaDavall = isEscala(actualRow + 1, actualCol);
+        boolean hiHaParetDavall = isWall(actualRow + 1, actualCol);
+        
+        return !hiHaGelDavall && !estaDamuntPasarela  && !estaEnLaEscala && !hiHaEscalaDavall && !hiHaParetDavall;
+    }
+    public void applyGravity(){
+        int actualRow = player.getRow();
+        int actualCol = player.getCol();
+        
+        int nextRow = actualRow+1;
+        int nextCol = actualCol;
+        if (canMoveTo(nextRow, nextCol)) {
+        player.setPosition(nextRow, nextCol);
+        
+        }
     }
 }

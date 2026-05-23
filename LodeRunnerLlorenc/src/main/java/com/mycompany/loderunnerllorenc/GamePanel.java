@@ -53,7 +53,7 @@ public class GamePanel extends JPanel {
         // Necessari perquè el JPanel pugui rebre tecles.
         setFocusable(true);
 
-        // Escoltem les fletxes del teclat.
+        // Escoltar teclat.
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -67,7 +67,11 @@ public class GamePanel extends JPanel {
      */
     private void handleInput(KeyEvent e) {
         Direction direction = null;
-
+        if(gameState.shouldDrop()){
+            gameState.applyGravity();
+            repaint();
+            return;
+        }
         if (e.getKeyCode() == KeyEvent.VK_UP) {
             direction = Direction.UP;
         } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
@@ -80,6 +84,14 @@ public class GamePanel extends JPanel {
 
         if (direction != null) {
             gameState.takeTurn(direction);
+            repaint();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_Q) {
+            gameState.breakDownLeft();
+            repaint();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_E) {
+            gameState.breakDownRight();
             repaint();
         }
     }
