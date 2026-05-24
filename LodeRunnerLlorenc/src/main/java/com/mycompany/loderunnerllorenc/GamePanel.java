@@ -167,7 +167,7 @@ public class GamePanel extends JPanel {
      * Dibuixa una casella amb pasarela.
      */
     private void drawPasarela(Graphics g, int row, int col) {
-        drawEmoji(g, "—", row, col, null);
+        drawEmoji(g, "—", row, col, new Color(134, 0, 179));
     }
 
 
