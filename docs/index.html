@@ -16,10 +16,8 @@
   initSqlJs(config).then(function (SQL) {
     //Create the database
     const xhr = new XMLHttpRequest();
-    // For example: https://github.com/lerocha/chinook-database/raw/master/ChinookDatabase/DataSources/Chinook_Sqlite.sqlite
-    xhr.open('GET', 'https://github.com/Penguin-Runner-IES-Sineu/Penguin-Runner/blob/main/docs/bbdd.sqlite', true);
+    xhr.open('GET', 'bbdd.sqlite', true);
     xhr.responseType = 'arraybuffer';
-
     xhr.onload = e => {
       const uInt8Array = new Uint8Array(xhr.response);
       const db = new SQL.Database(uInt8Array);
@@ -27,12 +25,6 @@
       // contents is now [{columns:['col1','col2',...], values:[[first row], [second row], ...]}]
     };
     xhr.send();
-    // // Run a query without reading the results
-    // db.run("CREATE TABLE test (col1, col2);");
-    // // Insert two rows: (1,111) and (2,222)
-    // db.run("INSERT INTO test VALUES (?,?), (?,?)", [1, 111, 2, 222]);
-
-    // Prepare a statement
   });
 </script>
 
