@@ -90,19 +90,19 @@ public class GameState {
                         map[row][col] = TileType.WALL;
                         break;
                     case 'G':
-                        map[row][col] = TileType.GELAT;
+                        map[row][col] = TileType.ICECREAM;
                         break;
                     case '.':
-                        map[row][col] = TileType.GEL;
+                        map[row][col] = TileType.ICE;
                         break;
                     case 'H':
-                        map[row][col] = TileType.ESCALA;
+                        map[row][col] = TileType.STAIR;
                         break;
                     case '-':
-                        map[row][col] = TileType.PASARELA;
+                        map[row][col] = TileType.RAIL;
                         break;
                     default:
-                        map[row][col] = TileType.RES;
+                        map[row][col] = TileType.BLANK;
                         break;
                 }
 
@@ -209,8 +209,8 @@ public class GameState {
         if (isOutOfBounds(row, col)) {
             return;
         }
-        if (map[row][col] == TileType.GEL) {
-            map[row][col] = TileType.FOS;
+        if (map[row][col] == TileType.ICE) {
+            map[row][col] = TileType.MOLTEN;
             brokenBlocks.add(new BrokenBlock(row, col, 5));
         }
 
@@ -300,19 +300,19 @@ public class GameState {
     }
 
     private boolean isIce(int row, int col) {
-        return map[row][col] == TileType.GEL;
+        return map[row][col] == TileType.ICE;
     }
 
     private boolean isRail(int row, int col) {
-        return map[row][col] == TileType.PASARELA;
+        return map[row][col] == TileType.RAIL;
     }
 
     private boolean isStair(int row, int col) {
-        return map[row][col] == TileType.ESCALA;
+        return map[row][col] == TileType.STAIR;
     }
 
     private boolean isFos(int row, int col) {
-        return map[row][col] == TileType.FOS;
+        return map[row][col] == TileType.MOLTEN;
     }
 
     private boolean isEnemy(int row, int col) {
@@ -333,8 +333,8 @@ public class GameState {
         int row = player.getRow();
         int col = player.getCol();
 
-        if (map[row][col] == TileType.GELAT) {
-            map[row][col] = TileType.RES;
+        if (map[row][col] == TileType.ICECREAM) {
+            map[row][col] = TileType.BLANK;
         }
     }
 
@@ -411,7 +411,7 @@ public class GameState {
             block.turnsLeft--;
 
             if (block.turnsLeft <= 0) {
-                map[block.row][block.col] = TileType.GEL;
+                map[block.row][block.col] = TileType.ICE;
                 brokenBlocks.remove(posicio);
             }
         }

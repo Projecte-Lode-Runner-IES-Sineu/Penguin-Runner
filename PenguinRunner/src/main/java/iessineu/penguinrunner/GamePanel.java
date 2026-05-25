@@ -134,13 +134,13 @@ public class GamePanel extends JPanel {
                     switch (tile) {
                         case WALL ->
                             drawParet(g, row, col);
-                        case GEL ->
+                        case ICE ->
                             drawGel(g, row, col);
-                        case GELAT ->
+                        case ICECREAM ->
                             drawGelat(g, row, col);
-                        case ESCALA ->
+                        case STAIR ->
                             drawEscala(g, row, col);
-                        case PASARELA ->
+                        case RAIL ->
                             drawPasarela(g, row, col);
                         default -> {
                         }

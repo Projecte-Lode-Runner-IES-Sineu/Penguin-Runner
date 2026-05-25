@@ -13,11 +13,11 @@ package iessineu.penguinrunner;
  * Tipus de caselles que pot tenir el mapa.
  */
 public enum TileType {
-    GEL,
+    ICE,
     WALL,
-    GELAT,
-    ESCALA,
-    PASARELA,
-    FOS,
-    RES
+    ICECREAM,
+    STAIR,
+    RAIL,
+    MOLTEN,
+    BLANK
 }
