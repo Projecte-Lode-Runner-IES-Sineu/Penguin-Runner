@@ -220,7 +220,10 @@ public class GameState {
                    enemy.revive();
                 }
             } else {
-                moveEnemy(enemy);
+                if(!isFos(enemy.getRow(), enemy.getCol())){
+                    moveEnemy(enemy);
+                }
+                
             }
             
             
