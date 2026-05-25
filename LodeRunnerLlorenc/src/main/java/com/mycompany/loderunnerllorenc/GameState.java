@@ -53,7 +53,7 @@ public class GameState {
             "####################",
             "#pnnnnnnnngnnnnnnnn#",
             "#n.......nnnn....nn#",
-            "#nnnnnn.nnEnnnnH.nn#",
+            "#nnnnnn.nnEnnnnHnnn#",
             "#nn.Gnn.n---nGnH.nn#",
             "#.....n........H.nn#",
             "#nnnnnn.nnnnnnnH.nn#",
@@ -134,12 +134,12 @@ public class GameState {
      * 3. Es comproven col·lisions.
      */
     public void takeTurn(Direction direction) {
-
-        movePlayer(direction);
         collectIcecream();
+        movePlayer(direction);
         moveEnemies();
         updateBrokenBlocks();
         checkCollisions();
+
     }
 
     /*
@@ -194,7 +194,7 @@ public class GameState {
             return;
         }
         if (map[row][col] == TileType.GEL) {
-            map[row][col] = TileType.RES;
+            map[row][col] = TileType.FOS;
             brokenBlocks.add(new BrokenBlock(row, col, 5));
         }
 
@@ -277,6 +277,9 @@ public class GameState {
     private boolean isEscala(int row, int col) {
         return map[row][col] == TileType.ESCALA;
     }
+    private boolean isFos(int row, int col) {
+        return map[row][col] == TileType.FOS;
+    }
     private boolean isEnemy(int row, int col) {
         for (Enemy enemy : enemies ){
             if(enemy.getRow() == row && enemy.getCol()== col)
@@ -287,8 +290,8 @@ public class GameState {
     }
 
     /*
-     * Si el jugador trepitja una casella amb or,
-     * la convertim en terra.
+     * Si el jugador trepitja una casella amb gelat,
+     * la convertim en res.
      */
     private void collectIcecream() {
         int row = player.getRow();
@@ -397,7 +400,9 @@ public class GameState {
                 && !isPasarela(row, col)
                 && !isEscala(row, col)
                 && !isEscala(row + 1, col)
-                && !isEnemy(row + 1, col);
+                && !isEnemy(row + 1, col)
+                && isFos(row + 1, col)
+                && !isFos(row, col);
     }
 
     public void applyGravity() {
