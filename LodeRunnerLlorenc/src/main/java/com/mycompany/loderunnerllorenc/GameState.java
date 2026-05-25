@@ -85,18 +85,25 @@ public class GameState {
 
                 char symbol = level[row].charAt(col);
 
-                if (symbol == '#') {
-                    map[row][col] = TileType.WALL;
-                } else if (symbol == 'G') {
-                    map[row][col] = TileType.GELAT;
-                } else if (symbol == '.') {
-                    map[row][col] = TileType.GEL;
-                } else if (symbol == 'H') {
-                    map[row][col] = TileType.ESCALA;
-                } else if (symbol == '-') {
-                    map[row][col] = TileType.PASARELA;
-                } else {
-                    map[row][col] = TileType.RES;
+                switch (symbol) {
+                    case '#':
+                        map[row][col] = TileType.WALL;
+                        break;
+                    case 'G':
+                        map[row][col] = TileType.GELAT;
+                        break;
+                    case '.':
+                        map[row][col] = TileType.GEL;
+                        break;
+                    case 'H':
+                        map[row][col] = TileType.ESCALA;
+                        break;
+                    case '-':
+                        map[row][col] = TileType.PASARELA;
+                        break;
+                    default:
+                        map[row][col] = TileType.RES;
+                        break;
                 }
 
                 /*
@@ -216,12 +223,12 @@ public class GameState {
      * Si ja està a la mateixa fila, intenta acostar-se en horitzontal.
      */
     private void moveEnemy(Enemy enemy) {
-        int row =enemy.getRow();
-        int col =enemy.getCol();
+        int row = enemy.getRow();
+        int col = enemy.getCol();
         int dr = 0;
         int dc = 0;
-        if (shouldDrop(row,col)) {
-            enemy.setPosition(row+1, col);
+        if (shouldDrop(row, col)) {
+            enemy.setPosition(row + 1, col);
             return;
         }
         if (enemy.getRow() < player.getRow()) {
@@ -263,25 +270,35 @@ public class GameState {
      * Comprova si una casella és paret.
      */
     private boolean isWall(int row, int col) {
-        return map[row][col] == TileType.WALL;
+        return isType(row, col, TileType.WALL);
+        // return map[row][col] == TileType.WALL;
     }
 
     private boolean isGel(int row, int col) {
-        return map[row][col] == TileType.GEL;
+        return isType(row, col, TileType.GEL);
+        // return map[row][col] == TileType.GEL;
     }
 
     private boolean isPasarela(int row, int col) {
-        return map[row][col] == TileType.PASARELA;
+        return isType(row, col, TileType.PASARELA);
+        // return map[row][col] == TileType.PASARELA;
     }
 
     private boolean isEscala(int row, int col) {
-        return map[row][col] == TileType.ESCALA;
+        return isType(row, col, TileType.ESCALA);
+        // return map[row][col] == TileType.ESCALA;
     }
+
+    private boolean isType(int row, int col, TileType type) {
+        return map[row][col] == type;
+    }
+
     private boolean isEnemy(int row, int col) {
-        for (Enemy enemy : enemies ){
-            if(enemy.getRow() == row && enemy.getCol()== col)
+        for (Enemy enemy : enemies) {
+            if (enemy.getRow() == row && enemy.getCol() == col) {
                 return true;
-            
+            }
+
         }
         return false;
     }
@@ -294,9 +311,13 @@ public class GameState {
         int row = player.getRow();
         int col = player.getCol();
 
-        if (map[row][col] == TileType.GELAT) {
+        if (isType(row, col, TileType.GELAT)) {
             map[row][col] = TileType.RES;
         }
+
+        // if (map[row][col] == TileType.GELAT) {
+        //     map[row][col] = TileType.RES;
+        // }
     }
 
     /*
@@ -388,7 +409,7 @@ public class GameState {
         boolean hiHaParetDavall = isWall(actualRow + 1, actualCol);
         boolean hiHaEnemicDavall = isEnemy(actualRow + 1, actualCol);
 
-        return !hiHaGelDavall && !estaDamuntPasarela && !estaEnLaEscala && !hiHaEscalaDavall && !hiHaParetDavall &&!hiHaEnemicDavall;
+        return !hiHaGelDavall && !estaDamuntPasarela && !estaEnLaEscala && !hiHaEscalaDavall && !hiHaParetDavall && !hiHaEnemicDavall;
     }
 
     private boolean shouldDrop(int row, int col) {
