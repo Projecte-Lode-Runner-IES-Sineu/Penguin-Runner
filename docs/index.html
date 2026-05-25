@@ -1,11 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A</title>
 </head>
+<script src='js/sql-asm.js'></script>
+<script>
+  config = {
+    locateFile: filename => `js/${filename}`
+  }
+  // The `initSqlJs` function is globally provided by all of the main dist files if loaded in the browser.
+  // We must specify this locateFile function if we are loading a wasm file from anywhere other than the current html page's folder.
+  initSqlJs(config).then(function (SQL) {
+    //Create the database
+    const xhr = new XMLHttpRequest();
+    // For example: https://github.com/lerocha/chinook-database/raw/master/ChinookDatabase/DataSources/Chinook_Sqlite.sqlite
+    xhr.open('GET', 'https://github.com/Penguin-Runner-IES-Sineu/Penguin-Runner/blob/main/docs/bbdd.sqlite', true);
+    xhr.responseType = 'arraybuffer';
+
+    xhr.onload = e => {
+      const uInt8Array = new Uint8Array(xhr.response);
+      const db = new SQL.Database(uInt8Array);
+      const contents = db.exec("SELECT * FROM main");
+      // contents is now [{columns:['col1','col2',...], values:[[first row], [second row], ...]}]
+    };
+    xhr.send();
+    // // Run a query without reading the results
+    // db.run("CREATE TABLE test (col1, col2);");
+    // // Insert two rows: (1,111) and (2,222)
+    // db.run("INSERT INTO test VALUES (?,?), (?,?)", [1, 111, 2, 222]);
+
+    // Prepare a statement
+  });
+</script>
+
 <body>
-    
+
 </body>
+
 </html>
