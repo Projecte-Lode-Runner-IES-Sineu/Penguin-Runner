@@ -22,13 +22,39 @@
       const uInt8Array = new Uint8Array(xhr.response);
       const db = new SQL.Database(uInt8Array);
       contents = db.exec("SELECT * FROM main");
-      // contents is now [{columns:['col1','col2',...], values:[[first row], [second row], ...]}]
+      const taula = document.querySelector('#taula');
+      var tbody = taula.getElementsByTagName("tbody")[0];
+      for (let i = 0; i < contents[0].columns.length; i++) {
+        var valor = contents[0].columns[i];
+        var col = "#col" + (i + 1);
+        var el = document.querySelector(col)
+        el.innerHTML = valor;
+      }
+      for (let i = 0; i < contents[0].values.length; i++) {
+        var row = document.createElement("tr");
+        valors = contents[0].values[i];
+        for (let j = 0; j < valors.length; j++) {
+          var cell = document.createElement("td");
+          cell.innerHTML = valors[j];
+          row.appendChild(cell);
+        }
+        tbody.appendChild(row);
+      }
+
     };
     xhr.send();
   });
 </script>
 
 <body>
+
+  <table id="taula">
+    <tr>
+      <th id="col1">Cap 1</th>
+      <th id="col2">Cap 2</th>
+      <th id="col3">Cap 3</th>
+    </tr>
+  </table>
 
 </body>
 
