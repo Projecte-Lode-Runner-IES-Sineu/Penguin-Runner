@@ -7,19 +7,23 @@ initSqlJs(config).then(function (SQL) {
     //Create the database
     const xhr = new XMLHttpRequest();
     xhr.open('GET', 'bbdd.sqlite', true);
+    // xhr.open('GET', 'carModels.db', true);
     xhr.responseType = 'arraybuffer';
     xhr.onload = e => {
         const uInt8Array = new Uint8Array(xhr.response);
         const db = new SQL.Database(uInt8Array);
         contents = db.exec("SELECT * FROM main");
+        // contents = db.exec("SELECT * FROM carmodels");
         const taula = document.querySelector('#taula');
-        var tbody = taula.getElementsByTagName("tbody")[0];
+        var tbody = document.createElement("tbody");
+        taula.appendChild(tbody);
+        var headerRow = document.createElement("tr");
         for (let i = 0; i < contents[0].columns.length; i++) {
-            var valor = contents[0].columns[i];
-            var col = "#col" + (i + 1);
-            var el = document.querySelector(col)
-            el.innerHTML = valor;
+            var cell = document.createElement("th");
+            cell.innerHTML = contents[0].columns[i];
+            headerRow.appendChild(cell);
         }
+        tbody.appendChild(headerRow);
         for (let i = 0; i < contents[0].values.length; i++) {
             var row = document.createElement("tr");
             valors = contents[0].values[i];
