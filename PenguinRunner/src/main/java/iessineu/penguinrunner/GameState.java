@@ -8,19 +8,25 @@ package iessineu.penguinrunner;
  *
  * @author loren
  */
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /*
  * GameState conté l'estat i la lògica del joc.
  *
  * Responsabilitats:
- * - Guardar el mapa.
- * - Guardar el jugador.
- * - Guardar els enemics.
- * - Moure el jugador.
- * - Moure els enemics.
- * - Comprovar col·lisions.
+ * Guardar el mapa.
+ * Guardar el jugador.
+ * Guardar els enemics.
+ * Moure el jugador.
+ * Moure els enemics.
+ * Comprovar col·lisions.
  *
  * Aquesta classe NO dibuixa res.
  */
@@ -49,13 +55,8 @@ public class GameState {
          * P = jugador
          * E = enemic
          */
-        String[] level = {};
-        DefaultMaps maps = new DefaultMaps();
-        int amountOfMaps = maps.getAmountOfMaps();
-        if(amountOfMaps >= 1){
-            level = maps.getMap(0);
-        }
-        
+        List<Map> mapList = llegirMapes();
+        String[] level = mapList.get(0).getMap();
 
         map = new TileType[level.length][level[0].length()];
         enemies = new ArrayList<>();
@@ -449,5 +450,29 @@ public class GameState {
             collectIcecream();
         }
 
+    }
+
+    public List<Map> llegirMapes() {
+        String jsonString = "";
+        try {
+            Scanner s = new Scanner(new File("resources/maps.json"));
+            while (s.hasNext()) {
+                jsonString += s.next();
+            }
+        } catch (FileNotFoundException ex) {
+            System.out.println("L'arxiu de mapes no s'ha trobat!");
+        }
+        JSONArray maps = new JSONArray(jsonString);
+        List<Map> mapList = new ArrayList();
+        for (int i = 0; i < maps.length(); i++) {
+            JSONObject obj = maps.getJSONObject(i);
+            JSONArray jAr = obj.getJSONArray("view");
+            String[] view = new String[jAr.length()];
+            for (int j = 0; j < view.length; j++) {
+                view[j] = jAr.getString(j);
+            }
+            mapList.add(new Map(obj.getInt("level"), view));
+        }
+        return mapList;
     }
 }

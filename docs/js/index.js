@@ -13,7 +13,7 @@ initSqlJs(config).then(function (SQL) {
         const uInt8Array = new Uint8Array(xhr.response);
         const db = new SQL.Database(uInt8Array);
         contents = db.exec("SELECT * FROM main");
-        // contents = db.exec("SELECT * FROM carmodels");
+        // contents = db.exec("SELECT * FROM carmodels ");
         const taula = document.querySelector('#taula');
         var tbody = document.createElement("tbody");
         taula.appendChild(tbody);
