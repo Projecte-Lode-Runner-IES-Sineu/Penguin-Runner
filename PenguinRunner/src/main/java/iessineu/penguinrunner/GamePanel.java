@@ -21,8 +21,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -64,6 +66,7 @@ public class GamePanel extends JPanel {
         }
         gameState = new GameState();
         this.carregarPartida();
+        // String nomArxiu = JOptionPane.showInputDialog("Introdueixi el nom de la partida (sense extensió) o deixi buit per una nova partida");
 
         int width = gameState.getCols() * TILE_SIZE;
         int height = gameState.getRows() * TILE_SIZE;
@@ -128,7 +131,7 @@ public class GamePanel extends JPanel {
         try {
             file = new ObjectOutputStream(new FileOutputStream("saves/" + nomArxiu + ".milm"));
             file.writeObject((Object) estat);
-            File f = new File("saves/"+nomArxiu);
+            File f = new File("saves/" + nomArxiu);
             System.out.println("Guardat a " + f.getAbsolutePath() + ".milm");
         } catch (IOException ex) {
             System.out.println("Problema al guardar");
@@ -138,10 +141,20 @@ public class GamePanel extends JPanel {
     }
 
     public void carregarPartida() {
-        String nomArxiu = JOptionPane.showInputDialog("Introdueixi el nom de la partida (sense extensió) o deixi buit per una nova partida");
-        if (nomArxiu.length() > 0) {
+        String nomArxiu = "";
+        int test = JOptionPane.showConfirmDialog(null, "Vol carregar una Partida?", "Benvingut a Penguin Runner", JOptionPane.YES_NO_OPTION);
+        JPanel jp = new JPanel();
+        if (test == JOptionPane.YES_OPTION) {
+            JFileChooser JFC = new JFileChooser("saves/");
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("Arxius MILM", "milm");
+            JFC.setFileFilter(filter);
+            int returnVal = JFC.showOpenDialog(jp);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                nomArxiu = JFC.getSelectedFile().getName();
+                System.out.println(nomArxiu);
+            }
             try {
-                ObjectInputStream file = new ObjectInputStream(new FileInputStream("saves/" + nomArxiu + ".milm"));
+                ObjectInputStream file = new ObjectInputStream(new FileInputStream("saves/" + nomArxiu));
                 this.gameState = (GameState) file.readObject();
             } catch (IOException ex) {
                 System.out.println("Problema al carregar!");
@@ -149,7 +162,6 @@ public class GamePanel extends JPanel {
                 System.getLogger(GamePanel.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
             }
         }
-
     }
 
     /*
@@ -157,7 +169,8 @@ public class GamePanel extends JPanel {
      * Swing el crida automàticament quan cal redibuixar.
      */
     @Override
-    protected void paintComponent(Graphics g) {
+    protected void paintComponent(Graphics g
+    ) {
         super.paintComponent(g);
 
         drawMap(g);
