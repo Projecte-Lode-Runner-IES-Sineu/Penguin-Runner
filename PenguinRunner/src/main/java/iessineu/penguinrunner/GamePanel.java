@@ -118,13 +118,17 @@ public class GamePanel extends JPanel {
     }
 
     public void guardarPartida() {
-        String nomArxiu = JOptionPane.showInputDialog("Introdueixi el nom de la partida (sense extensió)");
+        String nomArxiu = JOptionPane.showInputDialog("Introdueixi el nom de la partida (sense extensió) o deixa-ho buit per emprar un nom generic");
+        if (nomArxiu.length() == 0) {
+            int saveAmount = new File("saves/").list().length;
+            nomArxiu = "partidaGuardada" + saveAmount;
+        }
         GameState estat = this.gameState;
         ObjectOutputStream file;
         try {
-            file = new ObjectOutputStream(new FileOutputStream(nomArxiu + ".milm"));
+            file = new ObjectOutputStream(new FileOutputStream("saves/" + nomArxiu + ".milm"));
             file.writeObject((Object) estat);
-            File f = new File(nomArxiu);
+            File f = new File("saves/"+nomArxiu);
             System.out.println("Guardat a " + f.getAbsolutePath() + ".milm");
         } catch (IOException ex) {
             System.out.println("Problema al guardar");
@@ -137,7 +141,7 @@ public class GamePanel extends JPanel {
         String nomArxiu = JOptionPane.showInputDialog("Introdueixi el nom de la partida (sense extensió) o deixi buit per una nova partida");
         if (nomArxiu.length() > 0) {
             try {
-                ObjectInputStream file = new ObjectInputStream(new FileInputStream(nomArxiu + ".milm"));
+                ObjectInputStream file = new ObjectInputStream(new FileInputStream("saves/" + nomArxiu + ".milm"));
                 this.gameState = (GameState) file.readObject();
             } catch (IOException ex) {
                 System.out.println("Problema al carregar!");
