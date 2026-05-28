@@ -3,6 +3,8 @@
  */
 package iessineu.penguinrunner;
 
+import java.io.File;
+
 import javax.swing.SwingUtilities;
 
 /**
@@ -12,6 +14,11 @@ import javax.swing.SwingUtilities;
 public class PenguinRunner {
 
     public static void main(String[] args) {
+
+        File carpeta = new File("saves"); //cream carpeta guardats
+        if (!carpeta.exists()) {
+            carpeta.mkdirs();
+        }
 
         /*
          * SwingUtilities.invokeLater fa que la finestra es creï
