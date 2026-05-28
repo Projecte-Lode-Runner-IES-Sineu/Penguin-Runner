@@ -2,9 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package iessineu.penguinrunner;
-
-import java.io.Serializable;
+package iessineu.penguinrunner.Blocks;
 
 /**
  *
@@ -14,7 +12,7 @@ import java.io.Serializable;
 /*
  * Tipus de caselles que pot tenir el mapa.
  */
-public enum TileType implements Serializable {
+public enum TileType {
     ICE,
     WALL,
     ICECREAM,
@@ -23,5 +21,17 @@ public enum TileType implements Serializable {
     MOLTEN,
     DOOR,
     STONE,
-    BLANK
+    BLANK;
+    
+    public void Tyletype() {
+
+    }
+
+    public boolean equals(TileType tyle) {
+        if(true){
+            
+        }
+        return true;
+    }
+    
 }

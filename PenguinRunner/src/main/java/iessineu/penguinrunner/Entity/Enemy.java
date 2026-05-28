@@ -2,9 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package iessineu.penguinrunner;
+package iessineu.penguinrunner.Entity;
 
-import java.io.Serializable;
+import java.awt.Color;
 
 /**
  *
@@ -16,7 +16,7 @@ import java.io.Serializable;
  *
  * Igual que el jugador, l'enemic es mou per caselles.
  */
-public class Enemy implements Serializable{
+public class Enemy {
 
     private int row;
     private int col;
@@ -78,4 +78,12 @@ public class Enemy implements Serializable{
         this.row = row;
         this.col = col;
     }
+
+        public String getAvatar() {
+        return "🦭";
+    }
+    public Color getColor() {
+        return new Color(26, 140, 255);
+    }
+    
 }
