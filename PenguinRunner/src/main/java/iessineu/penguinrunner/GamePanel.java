@@ -104,32 +104,27 @@ public class GamePanel extends JPanel {
             case KeyEvent.VK_E ->
                 gameState.breakDownRight();
             case KeyEvent.VK_P ->
-                this.guardarPartida();
+                guardarPartida();
             case KeyEvent.VK_O ->
-                this.carregarPartida();
+                carregarPartida();
+            case KeyEvent.VK_F ->
+                gameState.interact();
         }
 
-        // if (direction != null) {
         gameState.takeTurn(direction);
-        // }
 
-        while(gameState.shouldDrop()){
-            gameState.takeTurn(Direction.DOWN);
-            repaint();
+        long start = System.currentTimeMillis();
+        while (gameState.shouldDrop()) {
+            long deltaTime = System.currentTimeMillis() - start;
+            if (deltaTime > 500) {
+                repaint();
+                gameState.takeTurn(Direction.DOWN);
+                start = System.currentTimeMillis();
+            } else {
+                System.out.println("Esperant " + System.currentTimeMillis());
+                System.out.println("Delta " + deltaTime);
+            }
         }
-
-        // long current = System.currentTimeMillis();
-        // while (gameState.shouldDrop()) { //ha de ser un IF
-        //     repaint();
-        //     if (System.currentTimeMillis() - current < 500) {
-        //         gameState.takeTurn(Direction.DOWN);
-        //         current = System.currentTimeMillis();
-        //         repaint();
-        //     } else {
-        //         gameState.takeTurn();
-        //         repaint();
-        //     }
-        // }
         repaint();
     }
 
@@ -231,6 +226,7 @@ public class GamePanel extends JPanel {
         drawCellBackground(g, row, col, new Color(70, 70, 80));
         drawEmoji(g, "🧱", row, col, null, font);
     }
+
     private void drawStone(Graphics g, int row, int col) {
         drawCellBackground(g, row, col, new Color(20, 20, 20));
         drawEmoji(g, "🧱", row, col, null, font);

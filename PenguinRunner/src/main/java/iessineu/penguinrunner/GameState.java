@@ -36,18 +36,20 @@ public class GameState implements Serializable {
 
     private final List<BrokenBlock> brokenBlocks = new ArrayList<>();
     private final List<Stone> stoneBlocks = new ArrayList<>();
-    private final TileType[][] map;
+    private TileType[][] map;
     private Map mapObject = null;
-    private final Player player;
-    private final List<Enemy> enemies;
+    private Player player;
+    private List<Enemy> enemies;
     private int iceCream = 0;
+    List<Map> mapList = llegirMapes();
+
 
     /*
      * Guardem les posicions inicials per poder reiniciar
      * quan l'enemic atrapa el jugador.
      */
-    private final int startPlayerRow;
-    private final int startPlayerCol;
+    private int startPlayerRow;
+    private int startPlayerCol;
 
     public GameState() {
 
@@ -61,70 +63,8 @@ public class GameState implements Serializable {
          * E = enemic
          * D = porta
          */
-        List<Map> mapList = llegirMapes();
         this.mapObject = mapList.get(0);
-        String[] level = mapObject.getMap();
-
-        map = new TileType[level.length][level[0].length()];
-        enemies = new ArrayList();
-
-        Player foundPlayer = null;
-
-        /*
-         * Valors temporals per recordar on comença el jugador.
-         */
-        int tempStartRow = 1;
-        int tempStartCol = 1;
-
-        /*
-         * Convertim el mapa de text a TileType[][].
-         */
-        for (int row = 0; row < level.length; row++) {
-            for (int col = 0; col < level[row].length(); col++) {
-
-                char symbol = level[row].charAt(col);
-
-                switch (symbol) {
-                    case '#' ->
-                        map[row][col] = TileType.WALL;
-                    case 'G' -> {
-                        map[row][col] = TileType.ICECREAM;
-                        iceCream++;
-                    }
-                    case '.' ->
-                        map[row][col] = TileType.ICE;
-                    case 'H' ->
-                        map[row][col] = TileType.STAIR;
-                    case '-' ->
-                        map[row][col] = TileType.RAIL;
-                    case 'D' ->
-                        map[row][col] = TileType.DOOR;
-                    case 'P' -> {
-                        // Si trobem el jugador, el creem.
-                        // La casella on hi havia P passa a ser terra.
-                        foundPlayer = new Player(row, col);
-                        tempStartRow = row;
-                        tempStartCol = col;
-                    }
-                    case 'E' ->
-                        // Si trobem un enemic, l'afegim a la llista.
-                        // La casella on hi havia E passa a ser terra.
-                        enemies.add(new Enemy(row, col, 1, 1));
-                    case 'S' -> {
-                        stoneBlocks.add(new Stone(row, col));
-                        map[row][col] = TileType.STONE;
-                        break;
-                    }
-                    default ->
-                        map[row][col] = TileType.BLANK;
-                }
-            }
-        }
-
-        player = foundPlayer;
-
-        startPlayerRow = tempStartRow;
-        startPlayerCol = tempStartCol;
+        map = stringToTileType();
     }
 
     /*
@@ -143,12 +83,11 @@ public class GameState implements Serializable {
         updateBrokenBlocks();
         checkCollisions();
 
-
     }
+
     /*
      * Mou el jugador una casella en la direcció indicada.
      */
-
     private void movePlayer(Direction direction) {
         int actualRow = player.getRow();
         int actualCol = player.getCol();
@@ -229,6 +168,80 @@ public class GameState implements Serializable {
                 return;
             }
         }
+    }
+
+    public void interact() {
+        if (map[player.getRow()][player.getCol()] == TileType.DOOR) {
+            System.out.println("Porta");
+            int nivellActual = mapObject.getLevel();
+            mapObject = mapList.get(nivellActual);
+            map = stringToTileType();
+        }
+    }
+
+    public TileType[][] stringToTileType() {
+        String[] level = mapObject.getMap();
+        map = new TileType[level.length][level[0].length()];
+        enemies = new ArrayList();
+
+        Player foundPlayer = null;
+
+        /*
+         * Valors temporals per recordar on comença el jugador.
+         */
+        int tempStartRow = 1;
+        int tempStartCol = 1;
+
+        /*
+         * Convertim el mapa de text a TileType[][].
+         */
+        for (int row = 0; row < level.length; row++) {
+            for (int col = 0; col < level[row].length(); col++) {
+
+                char symbol = level[row].charAt(col);
+
+                switch (symbol) {
+                    case '#' ->
+                        map[row][col] = TileType.WALL;
+                    case 'G' -> {
+                        map[row][col] = TileType.ICECREAM;
+                        iceCream++;
+                    }
+                    case '.' ->
+                        map[row][col] = TileType.ICE;
+                    case 'H' ->
+                        map[row][col] = TileType.STAIR;
+                    case '-' ->
+                        map[row][col] = TileType.RAIL;
+                    case 'D' ->
+                        map[row][col] = TileType.DOOR;
+                    case 'P' -> {
+                        // Si trobem el jugador, el creem.
+                        // La casella on hi havia P passa a ser terra.
+                        foundPlayer = new Player(row, col);
+                        tempStartRow = row;
+                        tempStartCol = col;
+                    }
+                    case 'E' ->
+                        // Si trobem un enemic, l'afegim a la llista.
+                        // La casella on hi havia E passa a ser terra.
+                        enemies.add(new Enemy(row, col, 1, 1));
+                    case 'S' -> {
+                        stoneBlocks.add(new Stone(row, col));
+                        map[row][col] = TileType.STONE;
+                        break;
+                    }
+                    default ->
+                        map[row][col] = TileType.BLANK;
+                }
+            }
+        }
+
+        player = foundPlayer;
+
+        startPlayerRow = tempStartRow;
+        startPlayerCol = tempStartCol;
+        return map;
     }
 
     /*
