@@ -35,13 +35,13 @@ import org.json.JSONObject;
 public class GameState implements Serializable {
 
     private final List<BrokenBlock> brokenBlocks = new ArrayList<>();
-    private final List<Stone> stoneBlocks = new ArrayList<>();
-    private TileType[][] map;
-    private Map mapObject = null;
+    private List<Stone> stoneBlocks = new ArrayList<>();
     private Player player;
     private List<Enemy> enemies;
     private int iceCream = 0;
-    List<Map> mapList = llegirMapes();
+    private List<Map> mapList = llegirMapes();
+    private Map mapObject = mapList.get(0);
+    private TileType[][] map = stringToTileType();
 
 
     /*
@@ -51,21 +51,7 @@ public class GameState implements Serializable {
     private int startPlayerRow;
     private int startPlayerCol;
 
-    public GameState() {
-
-        /*
-         * Mapa del nivell.
-         *
-         * # = paret
-         * . = terra
-         * G = or
-         * P = jugador
-         * E = enemic
-         * D = porta
-         */
-        this.mapObject = mapList.get(0);
-        map = stringToTileType();
-    }
+    public GameState() {}
 
     /*
      * Cada vegada que el jugador prem una fletxa:
@@ -180,6 +166,16 @@ public class GameState implements Serializable {
     }
 
     public TileType[][] stringToTileType() {
+        /*
+         * Mapa del nivell.
+         *
+         * # = paret
+         * . = terra
+         * G = or
+         * P = jugador
+         * E = enemic
+         * D = porta
+         */
         String[] level = mapObject.getMap();
         map = new TileType[level.length][level[0].length()];
         enemies = new ArrayList();
@@ -482,6 +478,26 @@ public class GameState implements Serializable {
 
     public int getLevel() {
         return mapObject.getLevel();
+    }
+
+    public int getIceCream() {
+        return iceCream;
+    }
+
+    public List<Stone> getStoneBlocks() {
+        return stoneBlocks;
+    }
+
+    public void setStoneBlocks(List<Stone> stoneBlocks) {
+        this.stoneBlocks = stoneBlocks;
+    }
+
+    public List<Map> getMapList() {
+        return mapList;
+    }
+
+    public void setMapList(List<Map> mapList) {
+        this.mapList = mapList;
     }
 
     private static class BrokenBlock implements Serializable {
