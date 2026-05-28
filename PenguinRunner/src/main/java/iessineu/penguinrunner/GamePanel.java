@@ -108,22 +108,28 @@ public class GamePanel extends JPanel {
             case KeyEvent.VK_O ->
                 this.carregarPartida();
         }
-        if (direction != null) {
-            gameState.takeTurn(direction);
+
+        // if (direction != null) {
+        gameState.takeTurn(direction);
+        // }
+
+        while(gameState.shouldDrop()){
+            gameState.takeTurn(Direction.DOWN);
+            repaint();
         }
 
-        long current = System.currentTimeMillis();
-        while (gameState.shouldDrop()) { //ha de ser un IF
-            repaint();
-            if (System.currentTimeMillis() - current < 500) {
-                gameState.takeTurn(Direction.DOWN);
-                current = System.currentTimeMillis();
-                repaint();
-            } else {
-                gameState.takeTurn();
-                repaint();
-            }
-        }
+        // long current = System.currentTimeMillis();
+        // while (gameState.shouldDrop()) { //ha de ser un IF
+        //     repaint();
+        //     if (System.currentTimeMillis() - current < 500) {
+        //         gameState.takeTurn(Direction.DOWN);
+        //         current = System.currentTimeMillis();
+        //         repaint();
+        //     } else {
+        //         gameState.takeTurn();
+        //         repaint();
+        //     }
+        // }
         repaint();
     }
 

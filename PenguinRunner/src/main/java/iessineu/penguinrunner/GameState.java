@@ -99,8 +99,8 @@ public class GameState implements Serializable {
                     case 'D' ->
                         map[row][col] = TileType.DOOR;
                     case 'P' -> {
-                        //         Si trobem el jugador, el creem.
-                        //         La casella on hi havia P passa a ser terra.
+                        // Si trobem el jugador, el creem.
+                        // La casella on hi havia P passa a ser terra.
                         foundPlayer = new Player(row, col);
                         tempStartRow = row;
                         tempStartCol = col;
@@ -130,8 +130,9 @@ public class GameState implements Serializable {
      * 3. Es comproven col·lisions.
      */
     public void takeTurn(Direction direction) {
-
-        movePlayer(direction);
+        if (direction != null) {
+            movePlayer(direction);
+        }
         collectIcecream();
         moveEnemies();
         updateBrokenBlocks();
@@ -139,13 +140,6 @@ public class GameState implements Serializable {
 
     }
 
-    public void takeTurn() {
-        collectIcecream();
-        moveEnemies();
-        updateBrokenBlocks();
-        checkCollisions();
-
-    }
 
     /*
      * Mou el jugador una casella en la direcció indicada.
