@@ -43,7 +43,6 @@ public class GameState implements Serializable {
     private Map mapObject = mapList.get(0);
     private TileType[][] map = stringToTileType();
 
-
     /*
      * Guardem les posicions inicials per poder reiniciar
      * quan l'enemic atrapa el jugador.
@@ -66,7 +65,7 @@ public class GameState implements Serializable {
         moveEnemies();
         updateBrokenBlocks();
         checkCollisions();
-
+        spriteJSON("type");
     }
 
     /*
@@ -176,6 +175,7 @@ public class GameState implements Serializable {
          */
         String[] level = mapObject.getMap();
         map = new TileType[level.length][level[0].length()];
+        iceCream = 0;
         enemies = new ArrayList();
 
         Player foundPlayer = null;
@@ -570,10 +570,10 @@ public class GameState implements Serializable {
 
     }
 
-    public List<Map> llegirMapes() {
+    public String llegirJSON(String ruta) {
         String jsonString = "";
         try {
-            BufferedReader fitxer = new BufferedReader(new FileReader("resources/maps.json"));
+            BufferedReader fitxer = new BufferedReader(new FileReader(ruta));
             try {
                 String c;
                 while ((c = fitxer.readLine()) != null) { //llegim linea, si no es null, imprimim la linea sencera
@@ -586,7 +586,11 @@ public class GameState implements Serializable {
         } catch (FileNotFoundException ex) {
             System.out.println("L'arxiu de mapes no s'ha trobat!");
         }
-        JSONArray maps = new JSONArray(jsonString);
+        return jsonString;
+    }
+
+    public List<Map> llegirMapes() {
+        JSONArray maps = new JSONArray(llegirJSON("resources/maps.json"));
         List<Map> mapList = new ArrayList();
         for (int i = 0; i < maps.length(); i++) {
             JSONObject obj = maps.getJSONObject(i);
@@ -598,5 +602,31 @@ public class GameState implements Serializable {
             mapList.add(new Map(obj.getInt("level"), view));
         }
         return mapList;
+    }
+
+    public String spriteJSON(String type) {
+        JSONArray entities = new JSONArray(llegirJSON("resources/entities.json"));
+        String sprite = "";
+        for (int i = 0; i < entities.length(); i++) {
+            JSONObject obj = entities.getJSONObject(i);
+            String objType = obj.getString("type");
+            switch (objType) {
+                case "tiles" -> {
+                    JSONArray tiles = obj.getJSONArray("tiles");
+                    for (int j = 0; j < tiles.length(); j++) {
+                        obj = (JSONObject) tiles.get(j);
+                        System.out.println("Type: " + obj.getString("type"));
+                        System.out.println("Sprite: " + obj.getString("sprite"));
+                        System.out.println("Color: " + obj.getString("color"));
+                    }
+                }
+                case "player", "enemy" -> {
+                    System.out.println("Sprite: " + obj.getString("sprite"));
+                    System.out.println("Nom: " + obj.getString("name"));
+                    System.out.println("Color: " + obj.getString("color"));
+                }
+            }
+        }
+        return "";
     }
 }

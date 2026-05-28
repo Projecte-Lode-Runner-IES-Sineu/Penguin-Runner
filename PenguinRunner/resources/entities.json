@@ -42,11 +42,13 @@
     {
         "type": "player",
         "sprite": "🐧",
-        "name": "Marc"
+        "name": "Marc",
+        "color": "#FFFF00"
     },
     {
         "type": "enemy",
         "sprite": "🦭",
-        "name": "Iñaqui"
+        "name": "Iñaqui",
+        "color": "#00FF00"
     }
 ]
