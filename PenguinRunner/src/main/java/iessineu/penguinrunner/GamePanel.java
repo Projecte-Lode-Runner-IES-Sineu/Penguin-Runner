@@ -107,11 +107,6 @@ public class GamePanel extends JPanel {
                 gameState.breakDownRight();
         }
 
-<<<<<<< Updated upstream
-        if (direction != null) {
-            gameState.takeTurn(direction);
-        }
-=======
         // if (direction != null) {
         gameState.takeTurn(direction);
         // }
@@ -130,7 +125,6 @@ public class GamePanel extends JPanel {
         //         repaint();
         //     }
         // }
->>>>>>> Stashed changes
         repaint();
     }
 

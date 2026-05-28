@@ -8,44 +8,6 @@ package iessineu.penguinrunner;
  *
  * @author loren
  */
-<<<<<<< Updated upstream
-import java.util.ArrayList;
-import java.util.List;
-
-/*
- * GameState conté l'estat i la lògica del joc.
- *
- * Responsabilitats:
- * - Guardar el mapa.
- * - Guardar el jugador.
- * - Guardar els enemics.
- * - Moure el jugador.
- * - Moure els enemics.
- * - Comprovar col·lisions.
- *
- * Aquesta classe NO dibuixa res.
- */
-public class GameState {
-
-    private final List<BrokenBlock> brokenBlocks = new ArrayList<>();
-    private final List<Stone> stoneBlocks = new ArrayList<>();
-    private final TileType[][] map;
-    private final Player player;
-    private final List<Enemy> enemies;
-=======
-import iessineu.penguinrunner.States.FallingState;
-import iessineu.penguinrunner.States.ClimbingState;
-import iessineu.penguinrunner.States.WalkingState;
-import iessineu.penguinrunner.States.PlayerState;
-import iessineu.penguinrunner.States.RailState;
-import iessineu.penguinrunner.Entity.Map;
-import iessineu.penguinrunner.Movement.Direction;
-import iessineu.penguinrunner.Entity.Enemy;
-import iessineu.penguinrunner.Entity.Player;
-import iessineu.penguinrunner.Blocks.*;
-import iessineu.penguinrunner.Blocks.TileType;
-import iessineu.penguinrunner.Blocks.Stone;
-import static iessineu.penguinrunner.Blocks.TileType.WALL;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -53,8 +15,29 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import iessineu.penguinrunner.Blocks.Block;
+import iessineu.penguinrunner.Blocks.Door;
+import iessineu.penguinrunner.Blocks.Ice;
+import iessineu.penguinrunner.Blocks.IceCream;
+import iessineu.penguinrunner.Blocks.Ladder;
+import iessineu.penguinrunner.Blocks.Molten;
+import iessineu.penguinrunner.Blocks.Rail;
+import iessineu.penguinrunner.Blocks.Stone;
+import iessineu.penguinrunner.Blocks.TileType;
+import iessineu.penguinrunner.Blocks.Wall;
+import iessineu.penguinrunner.Entity.Enemy;
+import iessineu.penguinrunner.Entity.Map;
+import iessineu.penguinrunner.Entity.Player;
+import iessineu.penguinrunner.Movement.Direction;
+import iessineu.penguinrunner.States.ClimbingState;
+import iessineu.penguinrunner.States.FallingState;
+import iessineu.penguinrunner.States.PlayerState;
+import iessineu.penguinrunner.States.RailState;
+import iessineu.penguinrunner.States.WalkingState;
 
 public class GameState implements Serializable {
 
@@ -69,7 +52,6 @@ public class GameState implements Serializable {
     private final List<Enemy> enemies;
 
     private int iceCream = 0;
->>>>>>> Stashed changes
 
     private final int startPlayerRow;
     private final int startPlayerCol;
@@ -79,27 +61,6 @@ public class GameState implements Serializable {
     private final PlayerState railState = new RailState();
     private final PlayerState fallingState = new FallingState();
 
-<<<<<<< Updated upstream
-        /*
-         * Mapa del nivell.
-         *
-         * # = paret
-         * . = terra
-         * G = or
-         * P = jugador
-         * E = enemic
-         * D = porta
-         */
-        String[] level = {};
-        DefaultMaps maps = new DefaultMaps();
-        int amountOfMaps = maps.getAmountOfMaps();
-        if (amountOfMaps >= 1) {
-            level = maps.getMap(0);
-        }
-        int icecream = 0;
-
-        map = new TileType[level.length][level[0].length()];
-=======
     public GameState() {
         List<Map> mapList = llegirMapes();
         this.mapObject = mapList.get(0);
@@ -107,7 +68,6 @@ public class GameState implements Serializable {
         String[] level = mapObject.getMap();
 
         blocks = new Block[level.length][level[0].length()];
->>>>>>> Stashed changes
         enemies = new ArrayList<>();
 
         Player foundPlayer = null;
@@ -121,50 +81,6 @@ public class GameState implements Serializable {
 
                 switch (symbol) {
                     case '#':
-<<<<<<< Updated upstream
-                        map[row][col] = TileType.WALL;
-                        break;
-                    case 'G':
-                        map[row][col] = TileType.ICECREAM;
-                        icecream++;
-                        break;
-                    case '.':
-                        map[row][col] = TileType.ICE;
-                        break;
-                    case 'H':
-                        map[row][col] = TileType.STAIR;
-                        break;
-                    case '-':
-                        map[row][col] = TileType.RAIL;
-                        break;
-                    case 'D':
-                        map[row][col] = TileType.DOOR;
-                    case 'S':
-                        stoneBlocks.add(new Stone(row, col));
-                        map[row][col] = TileType.STONE;
-                        break;
-                    default:
-                        map[row][col] = TileType.BLANK;
-                        break;
-                }
-
-                /*
-                 * Si trobem el jugador, el creem.
-                 * La casella on hi havia P passa a ser terra.
-                 */
-                if (symbol == 'P') {
-                    foundPlayer = new Player(row, col);
-                    tempStartRow = row;
-                    tempStartCol = col;
-                }
-
-                /*
-                 * Si trobem un enemic, l'afegim a la llista.
-                 * La casella on hi havia E passa a ser terra.
-                 */
-                if (symbol == 'E') {
-                    enemies.add(new Enemy(row, col, 1, 1));
-=======
                         blocks[row][col] = new Wall(row, col);
                         break;
 
@@ -210,7 +126,6 @@ public class GameState implements Serializable {
                     default:
                         blocks[row][col] = null;
                         break;
->>>>>>> Stashed changes
                 }
             }
         }
@@ -228,27 +143,6 @@ public class GameState implements Serializable {
      */
 
     public void takeTurn(Direction direction) {
-<<<<<<< Updated upstream
-        moveBlocks();
-        movePlayer(direction);
-        collectIcecream();
-        
-        moveEnemies();
-
-        updateBrokenBlocks();
-        checkCollisions();
-
-    }
-
-    public void takeTurn() {
-        moveBlocks();
-        collectIcecream();
-        
-        moveEnemies();
-        updateBrokenBlocks();
-        checkCollisions();
-
-=======
         updatePlayerState();
 
         if (direction != null) {
@@ -271,39 +165,11 @@ public class GameState implements Serializable {
         updateBrokenBlocks();
         checkCollisions();
         updatePlayerState();
->>>>>>> Stashed changes
     }
 
     /*
      * MÀQUINA D'ESTATS DEL JUGADOR
      */
-<<<<<<< Updated upstream
-    private void movePlayer(Direction direction) {
-        int actualRow = player.getRow();
-        int actualCol = player.getCol();
-
-        int nextRow = actualRow + direction.getDr();
-        int nextCol = actualCol + direction.getDc();
-
-        boolean iceUnderneath = isIce(actualRow + 1, actualCol);
-        boolean onRail = isRail(actualRow, actualCol); // maquina d'estats
-        boolean isClimbing = isStair(actualRow, actualCol); // maquina d'estats
-        boolean stairUnderneath = isStair(actualRow + 1, actualCol);
-        boolean enemyUnderneath = isEnemy(actualRow + 1, actualCol);
-
-        // Si vol pujar, només pot fer-ho si està damunt una escala
-        if (direction == Direction.UP) {
-            if (canMoveTo(nextRow, nextCol) && isClimbing) {
-                player.setPosition(nextRow, nextCol);
-            }
-            return;
-        }
-        if (direction == Direction.DOWN) {
-            if (canMoveTo(nextRow, nextCol) && (isClimbing || !enemyUnderneath || stairUnderneath)) {
-                player.setPosition(nextRow, nextCol);
-            }
-            return;
-=======
 
     private void updatePlayerState() {
         if (shouldPlayerDrop()) {
@@ -314,7 +180,6 @@ public class GameState implements Serializable {
             player.setState(railState);
         } else {
             player.setState(walkingState);
->>>>>>> Stashed changes
         }
     }
 
@@ -687,54 +552,6 @@ public class GameState implements Serializable {
      * GETTERS
      */
 
-<<<<<<< Updated upstream
-        if (map[row][col] == TileType.ICECREAM) {
-            map[row][col] = TileType.BLANK;
-            player.addIceCream();
-            System.out.println("Gelat: " + player.geticeCream());
-        }
-    }
-
-    /*
-     * Comprova si algun enemic està a la mateixa casella que el jugador.
-     */
-    private void checkCollisions() {
-        int actualRow = player.getRow();
-        int actualCol = player.getCol();
-        for (Enemy enemy : enemies) {
-            if ((enemy.getRow() == player.getRow()
-                    && enemy.getCol() == player.getCol()) || isIce(actualRow, actualCol)) {
-
-                resetPositions();
-            }
-        }
-    }
-
-    /*
-     * Reinicia el jugador i els enemics.
-     * De moment ho fem simple.
-     */
-    private void resetPositions() {
-        player.setPosition(startPlayerRow, startPlayerCol);
-        if (!stoneBlocks.isEmpty()){
-            for (Stone s : stoneBlocks) {
-                map[s.getRow()][s.getCol()] = TileType.BLANK;
-                s.moveToOriginalRow();
-                map[s.getRow()][s.getCol()] = TileType.STONE;
-            }
-        }
-        if (!enemies.isEmpty()) {
-            for (Enemy enemy : enemies) {
-                enemy.moveToOriginalRow();
-            }
-        }
-    }
-
-    /*
-     * Getters perquè el GamePanel pugui consultar informació.
-     */
-=======
->>>>>>> Stashed changes
     public TileType getTile(int row, int col) {
         Block block = getBlock(row, col);
 
@@ -761,9 +578,6 @@ public class GameState implements Serializable {
         return enemies;
     }
 
-<<<<<<< Updated upstream
-    private static class BrokenBlock {
-=======
     public int getLevel() {
         return mapObject.getLevel();
     }
@@ -777,7 +591,6 @@ public class GameState implements Serializable {
      */
 
     private static class BrokenBlock implements Serializable {
->>>>>>> Stashed changes
 
         int row;
         int col;
@@ -790,67 +603,6 @@ public class GameState implements Serializable {
         }
     }
 
-<<<<<<< Updated upstream
-    //actualitzar blocs
-    private void updateBrokenBlocks() {
-        for (int posicio = brokenBlocks.size() - 1; posicio >= 0; posicio--) {
-            BrokenBlock block = brokenBlocks.get(posicio);
-
-            block.turnsLeft--;
-
-            if (block.turnsLeft <= 0) {
-                map[block.row][block.col] = TileType.ICE;
-                brokenBlocks.remove(posicio);
-            }
-        }
-    }
-
-    //mira si caus
-    public boolean shouldDrop() {
-        int actualRow = player.getRow();
-        int actualCol = player.getCol();
-
-        boolean hiHaGelDavall = isIce(actualRow + 1, actualCol);
-        boolean estaDamuntPasarela = isRail(actualRow, actualCol);
-        boolean estaEnLaEscala = isStair(actualRow, actualCol);
-        boolean hiHaEscalaDavall = isStair(actualRow + 1, actualCol);
-        boolean hiHaParetDavall = isWall(actualRow + 1, actualCol);
-        boolean hiHaEnemicDavall = isEnemy(actualRow + 1, actualCol);
-        boolean hiHaPedraDavall = isStone(actualRow + 1, actualCol);
-
-        return !hiHaGelDavall && !estaDamuntPasarela && !estaEnLaEscala && !hiHaEscalaDavall && !hiHaParetDavall && !hiHaEnemicDavall && !hiHaPedraDavall;
-    }
-
-    private boolean shouldDrop(int row, int col) {
-        return !isIce(row + 1, col)
-                && !isWall(row + 1, col)
-                && !isRail(row, col)
-                && !isStair(row, col)
-                && !isStair(row + 1, col)
-                && !isEnemy(row + 1, col)
-                && isFos(row + 1, col)
-                && !isFos(row, col)
-                && !isStone(row, col);
-    }
-
-    private boolean shouldDie(int row, int col) {
-        return isIce(row, col);
-    }
-
-    public void applyGravity() {
-        int actualRow = player.getRow();
-        int actualCol = player.getCol();
-
-        int nextRow = actualRow + 1;
-        int nextCol = actualCol;
-        if (canMoveTo(nextRow, nextCol)) {
-            player.setPosition(nextRow, nextCol);
-            collectIcecream();
-        }
-
-    }
-}
-=======
     /*
      * LECTURA MAPES
      */
@@ -897,4 +649,3 @@ public class GameState implements Serializable {
         return mapList;
     }
 }
->>>>>>> Stashed changes
