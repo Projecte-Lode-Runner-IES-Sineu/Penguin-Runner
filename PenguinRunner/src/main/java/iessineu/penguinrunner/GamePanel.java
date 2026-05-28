@@ -111,20 +111,23 @@ public class GamePanel extends JPanel {
                 gameState.interact();
         }
 
+        // if (direction != null) {
         gameState.takeTurn(direction);
 
-        long start = System.currentTimeMillis();
-        while (gameState.shouldDrop()) {
-            long deltaTime = System.currentTimeMillis() - start;
-            if (deltaTime > 500) {
-                repaint();
-                gameState.takeTurn(Direction.DOWN);
-                start = System.currentTimeMillis();
-            } else {
-                System.out.println("Esperant " + System.currentTimeMillis());
-                System.out.println("Delta " + deltaTime);
-            }
-        }
+
+
+        // long current = System.currentTimeMillis();
+        // while (gameState.shouldDrop()) { //ha de ser un IF
+        //     repaint();
+        //     if (System.currentTimeMillis() - current < 500) {
+        //         gameState.takeTurn(Direction.DOWN);
+        //         current = System.currentTimeMillis();
+        //         repaint();
+        //     } else {
+        //         gameState.takeTurn();
+        //         repaint();
+        //     }
+        // }
         repaint();
     }
 
