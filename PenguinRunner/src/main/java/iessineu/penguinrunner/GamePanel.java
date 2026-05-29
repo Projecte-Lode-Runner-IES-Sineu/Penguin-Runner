@@ -4,15 +4,10 @@
  */
 package iessineu.penguinrunner;
 
-import iessineu.penguinrunner.Blocks.TileType;
-import iessineu.penguinrunner.Entity.Enemy;
-import iessineu.penguinrunner.Entity.Player;
-import iessineu.penguinrunner.Movement.Direction;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -28,11 +23,23 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import iessineu.penguinrunner.Blocks.TileType;
+import iessineu.penguinrunner.Entity.Enemy;
+import iessineu.penguinrunner.Entity.Player;
+import iessineu.penguinrunner.Movement.Direction;
 
 public class GamePanel extends JPanel {
 
@@ -45,27 +52,17 @@ public class GamePanel extends JPanel {
     private Image blankSprite;
     private Image railSprite;
     private Font font;
-    private Font font2;
     private final SoundManager soundManager = new SoundManager();
     private GameState gameState;
+    private Map<String, Image> mapaSprites = new HashMap();
 
     public GamePanel() {
 
-        font = new Font("Segoe UI Emoji", Font.PLAIN, 30); // per defecte s'empra aquesta, i després llegim l'arxiu 
-        font2 = new Font("Segoe UI Emoji", Font.PLAIN, 30); // per defecte s'empra aquesta, i després llegim l'arxiu 
-
-        try {
-            font = Font.createFont(Font.TRUETYPE_FONT, new File("resources/font.ttf")).deriveFont(33f);
-            font2 = Font.createFont(Font.TRUETYPE_FONT, new File("resources/font.ttf")).deriveFont(16f);
-        } catch (FontFormatException | IOException ex) {
-            System.out.println("Error obrint la font!");
-            System.getLogger(GamePanel.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
-        }
-
-        loadSprites();
         soundManager.playMusic("resources/music.wav");
         soundManager.setVolume(0.7f);
         gameState = new GameState();
+        loadfont();
+        loadSprites();
 
         int width = gameState.getCols() * TILE_SIZE;
         int height = gameState.getRows() * TILE_SIZE;
@@ -89,7 +86,7 @@ public class GamePanel extends JPanel {
      * Carrega la font externa. Si falla, usa una font del sistema.
      */
     private Font loadfont() {
-
+        font = new Font("Segoe UI Emoji", Font.PLAIN, 30); // per defecte s'empra aquesta, i després llegim l'arxiu 
         try {
             font = Font.createFont(Font.TRUETYPE_FONT, new File("resources/font.ttf")).deriveFont(30f);
         } catch (FontFormatException | IOException ex) {
@@ -296,42 +293,27 @@ public class GamePanel extends JPanel {
                 TileType tile = gameState.getTile(row, col);
 
                 switch (tile) {
-                    case WALL:
+                    case WALL ->
                         drawWall(g, row, col);
-                        break;
-
-                    case ICE:
+                    case ICE ->
                         drawIce(g, row, col);
-                        break;
-
-                    case ICECREAM:
+                    case ICECREAM ->
                         drawIceCream(g, row, col);
-                        break;
-
-                    case STAIR:
+                    case STAIR ->
                         drawStair(g, row, col);
-                        break;
-
-                    case RAIL:
+                    case RAIL ->
                         drawRail(g, row, col);
-                        break;
-
-                    case DOOR:
+                    case DOOR ->
                         drawDoor(g, row, col);
-                        break;
-
-                    case STONE:
+                    case STONE ->
                         drawStone(g, row, col);
-                        break;
-
-                    case MOLTEN:
+                    case MOLTEN ->
                         drawMolten(g, row, col);
-                        break;
-
-                    case BLANK:
-                    default:
+                    case BLANK ->
                         drawBlank(g, row, col);
-                        break;
+                    default -> {
+                        throw new AssertionError(tile.name());
+                    }
                 }
             }
         }
@@ -359,11 +341,6 @@ drawSprite(g, blankSprite, row, col);
     /*
      * Dibuixa una casella de gel.
      */
-//    private void drawIce(Graphics g, int row, int col) {
-//        drawCellBackground(g, row, col, new Color(102, 179, 255));
-//        drawEmoji(g, "🧱", row, col, new Color(0, 115, 230), font);
-//
-//    }
     private void drawIce(Graphics g, int row, int col) {
 //        drawCellBackground(g, row, col, new Color(102, 179, 255));
         drawSprite(g, iceSprite, row, col);
@@ -372,10 +349,6 @@ drawSprite(g, blankSprite, row, col);
     /*
      * Dibuixa una casella amb gelat.
      */
-//    private void drawIceCream(Graphics g, int row, int col) {
-//        drawCellBackground(g, row, col);
-//        drawEmoji(g, "🍦", row, col, new Color(155, 255, 153), font);
-//    }
     private void drawIceCream(Graphics g, int row, int col) {
 //        drawCellBackground(g, row, col);
         drawSprite(g, iceCreamSprite, row, col);
@@ -384,10 +357,6 @@ drawSprite(g, blankSprite, row, col);
     /*
      * Dibuixa una casella amb escala.
      */
-//    private void drawStair(Graphics g, int row, int col) {
-//        drawCellBackground(g, row, col);
-//        drawEmoji(g, "🪜", row, col, new Color(128, 64, 0), font);
-//    }
     private void drawStair(Graphics g, int row, int col) {
 
         drawSprite(g, stairsSprite, row, col);
@@ -492,13 +461,13 @@ drawSprite(g, blankSprite, row, col);
         int padding = 20;
         int textY = hudY + 35;
 
-        g2.setFont(font2);
+        g2.setFont(font.deriveFont(16f));
         g2.setColor(Color.WHITE);
 
         g2.drawString("🐧", padding, textY);
 
         g2.drawString(
-                "🍦 Gelats: " + player.geticeCream() + " / " + gameState.getIceCream(),
+                "🍦 " + player.geticeCream() + " / " + gameState.getIceCream(),
                 padding + 220,
                 textY
         );
@@ -511,9 +480,9 @@ drawSprite(g, blankSprite, row, col);
 
         g2.setColor(new Color(190, 210, 230));
         g2.drawString(
-                "Fletxes: moure   Q/E: trencar   F: interactuar   P: guardar   O: carregar",
+                "←↑→↓: moure   Q/E: trencar   F: interactuar   P: guardar   O: carregar",
                 padding,
-                hudY + 70
+                textY + 35
         );
     }
 
@@ -589,7 +558,40 @@ drawSprite(g, blankSprite, row, col);
         return new ImageIcon(path).getImage();
     }
 
+    private void createSpriteMap() {
+        JSONArray entities = new JSONArray(gameState.llegirJSON("entities"));
+        String sprite = "";
+        for (int i = 0; i < entities.length(); i++) {
+            JSONObject obj = entities.getJSONObject(i);
+            String objType = obj.getString("type");
+            try {
+                switch (objType) {
+                    case "tiles" -> {
+                        JSONArray tiles = obj.getJSONArray("tiles");
+                        for (int j = 0; j < tiles.length(); j++) {
+                            obj = (JSONObject) tiles.get(j);
+                            System.out.println("Type: " + obj.getString("type"));
+                            System.out.println("Sprite: " + obj.getString("sprite"));
+                            System.out.println("Color: " + obj.getString("color"));
+                            System.out.println("File name: " + obj.getString("filename"));
+                        }
+                    }
+                    case "player", "enemy" -> {
+                        System.out.println("Sprite: " + obj.getString("sprite"));
+                        System.out.println("Nom: " + obj.getString("name"));
+                        System.out.println("Color: " + obj.getString("color"));
+                        System.out.println("File name: " + obj.getString("filename"));
+                    }
+                }
+            } catch (JSONException e) {
+                System.out.println("No s'ha trobat cosa");
+            }
+        }
+
+    }
+
     private void loadSprites() {
+        createSpriteMap();
         iceSprite = loadSprite("resources/sprites/ice.png");
         iceCreamSprite = loadSprite("resources/sprites/iceCream.png");
         stairsSprite = loadSprite("resources/sprites/stairs.png");
@@ -604,4 +606,5 @@ drawSprite(g, blankSprite, row, col);
 
         g.drawImage(image, x, y, TILE_SIZE, TILE_SIZE, null);
     }
+
 }
