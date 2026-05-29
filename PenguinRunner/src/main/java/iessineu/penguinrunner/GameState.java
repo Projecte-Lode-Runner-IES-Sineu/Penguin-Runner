@@ -29,6 +29,7 @@ import iessineu.penguinrunner.Blocks.Molten;
 import iessineu.penguinrunner.Blocks.Rail;
 import iessineu.penguinrunner.Blocks.Stone;
 import iessineu.penguinrunner.Blocks.TileType;
+import iessineu.penguinrunner.Blocks.Wall;
 import iessineu.penguinrunner.Entity.Enemy;
 import iessineu.penguinrunner.Entity.GameMap;
 import iessineu.penguinrunner.Entity.Player;
@@ -74,19 +75,21 @@ public class GameState implements Serializable {
                 char symbol = level[row].charAt(col);
                 switch (symbol) {
                     case '#' -> {
+                        blocks[row][col] = new Wall(row, col);
                         // blocks[row][col] = new Wall(row, col);
-                        List<String> atr = mapaSprites.get("wall");
-                        blocks[row][col] = new Block(row, col, TileType.WALL);
-                        blocks[row][col].setEmoji(atr.get(0));
-                        blocks[row][col].setColorFromHex(atr.get(1));
-                        blocks[row][col].setSprite(atr.get(2));
+                        // List<String> atr = mapaSprites.get("wall");
+                        // blocks[row][col] = new Block(row, col, TileType.WALL);
+                        // blocks[row][col].setEmoji(atr.get(0));
+                        // blocks[row][col].setColorFromHex(atr.get(1));
+                        // blocks[row][col].setSprite(atr.get(2));
                     }
                     case '.' -> {
-                        blocks[row][col] = new Block(row, col, TileType.ICE);
-                        List<String> atr = mapaSprites.get("ice");
-                        blocks[row][col].setEmoji(atr.get(0));
-                        blocks[row][col].setColorFromHex(atr.get(1));
-                        blocks[row][col].setSprite(atr.get(2));
+                        blocks[row][col] = new Ice(row, col);
+                        // blocks[row][col] = new Block(row, col, TileType.ICE);
+                        // List<String> atr = mapaSprites.get("ice");
+                        // blocks[row][col].setEmoji(atr.get(0));
+                        // blocks[row][col].setColorFromHex(atr.get(1));
+                        // blocks[row][col].setSprite(atr.get(2));
                     }
                     case 'G' -> {
                         blocks[row][col] = new IceCream(row, col);
@@ -146,13 +149,14 @@ public class GameState implements Serializable {
                         // Enemy.setSprite(atr.get(2));
                     }
                     default -> {
-                        blocks[row][col] = new Block(row, col, TileType.BLANK);
+                        // blocks[row][col] = new Block(row, col, TileType.BLANK);
+                        blocks[row][col] = null;
                     }
                 }
             }
         }
 
-        // updatePlayerState();
+        updatePlayerState();
         return blocks;
     }
 

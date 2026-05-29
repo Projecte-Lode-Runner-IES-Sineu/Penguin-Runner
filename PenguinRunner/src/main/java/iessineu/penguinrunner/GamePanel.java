@@ -41,7 +41,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import iessineu.penguinrunner.Blocks.Block;
 import iessineu.penguinrunner.Blocks.TileType;
 import iessineu.penguinrunner.Entity.Enemy;
 import iessineu.penguinrunner.Entity.Player;
@@ -280,16 +279,18 @@ public class GamePanel extends JPanel {
         for (int row = 0; row < gameState.getRows(); row++) {
             for (int col = 0; col < gameState.getCols(); col++) {
                 TileType tile = gameState.getTile(row, col);
-                Block mapa[][] = gameState.loadMap();
+                // Block mapa[][] = gameState.loadMap();
                 switch (tile) {
                     case WALL -> {
-                        Block bloc = mapa[row][col];
-                        bloc.draw(row, col);
+                        drawWall(g, row, col);
+                        // Block bloc = mapa[row][col];
+                        // bloc.draw(row, col);
                         // Wall.draw(row, col);
                     }
                     case ICE -> {
-                        Block bloc = mapa[row][col];
-                        bloc.draw(row, col);
+                        drawIce(g, row, col);
+                        // Block bloc = mapa[row][col];
+                        // bloc.draw(row, col);
                         // Ice.draw(row, col);
                         // drawIce(g, row, col);
                         // System.out.println(Ice.getEmoji());
