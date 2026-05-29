@@ -17,13 +17,18 @@ import java.awt.event.KeyEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.ImageIcon;
@@ -36,6 +41,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import iessineu.penguinrunner.Blocks.Block;
 import iessineu.penguinrunner.Blocks.TileType;
 import iessineu.penguinrunner.Entity.Enemy;
 import iessineu.penguinrunner.Entity.Player;
@@ -54,15 +60,14 @@ public class GamePanel extends JPanel {
     private Font font;
     private final SoundManager soundManager = new SoundManager();
     private GameState gameState;
-    private Map<String, Image> mapaSprites = new HashMap();
 
     public GamePanel() {
-
         soundManager.playMusic("resources/music.wav");
         soundManager.setVolume(0.7f);
         gameState = new GameState();
-        loadfont();
+        loadFont();
         loadSprites();
+        Printable.setFont(font);
 
         int width = gameState.getCols() * TILE_SIZE;
         int height = gameState.getRows() * TILE_SIZE;
@@ -85,7 +90,7 @@ public class GamePanel extends JPanel {
     /*
      * Carrega la font externa. Si falla, usa una font del sistema.
      */
-    private Font loadfont() {
+    private Font loadFont() {
         font = new Font("Segoe UI Emoji", Font.PLAIN, 30); // per defecte s'empra aquesta, i després llegim l'arxiu 
         try {
             font = Font.createFont(Font.TRUETYPE_FONT, new File("resources/font.ttf")).deriveFont(30f);
@@ -121,51 +126,34 @@ public class GamePanel extends JPanel {
      */
     private void handleInput(KeyEvent e) {
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_UP:
+            case KeyEvent.VK_UP ->
                 playTurn(Direction.UP);
-                break;
-
-            case KeyEvent.VK_DOWN:
+            case KeyEvent.VK_DOWN ->
                 playTurn(Direction.DOWN);
-                break;
-
-            case KeyEvent.VK_LEFT:
+            case KeyEvent.VK_LEFT ->
                 playTurn(Direction.LEFT);
-                break;
-
-            case KeyEvent.VK_RIGHT:
+            case KeyEvent.VK_RIGHT ->
                 playTurn(Direction.RIGHT);
-                break;
-
-            case KeyEvent.VK_SPACE:
+            case KeyEvent.VK_SPACE ->
                 playTurn(null);
-                break;
-
-            case KeyEvent.VK_Q:
+            case KeyEvent.VK_Q -> {
                 gameState.breakDownLeft();
                 repaint();
-                break;
-
-            case KeyEvent.VK_E:
+            }
+            case KeyEvent.VK_E -> {
                 gameState.breakDownRight();
                 repaint();
-                break;
-
-            case KeyEvent.VK_F:
+            }
+            case KeyEvent.VK_F -> {
                 gameState.interact();
                 repaint();
-                break;
-
-            case KeyEvent.VK_P:
+            }
+            case KeyEvent.VK_P ->
                 guardarPartida();
-                break;
-
-            case KeyEvent.VK_O:
+            case KeyEvent.VK_O ->
                 carregarPartida();
-                break;
-
-            default:
-                break;
+            default -> {
+            }
         }
     }
 
@@ -278,6 +266,7 @@ public class GamePanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        Printable.setGraphics(g);
         drawMap(g);
         drawEnemies(g);
         drawPlayer(g);
@@ -291,23 +280,38 @@ public class GamePanel extends JPanel {
         for (int row = 0; row < gameState.getRows(); row++) {
             for (int col = 0; col < gameState.getCols(); col++) {
                 TileType tile = gameState.getTile(row, col);
-
+                Block mapa[][] = gameState.loadMap();
                 switch (tile) {
-                    case WALL ->
-                        drawWall(g, row, col);
-                    case ICE ->
-                        drawIce(g, row, col);
+                    case WALL -> {
+                        Block bloc = mapa[row][col];
+                        bloc.draw(row, col);
+                        // Wall.draw(row, col);
+                    }
+                    case ICE -> {
+                        Block bloc = mapa[row][col];
+                        bloc.draw(row, col);
+                        // Ice.draw(row, col);
+                        // drawIce(g, row, col);
+                        // System.out.println(Ice.getEmoji());
+                        // System.out.println(Ice.getColorPrintable());
+                    }
                     case ICECREAM ->
+                        // IceCream.draw(row, col);
                         drawIceCream(g, row, col);
                     case STAIR ->
+                        // Ladder.draw(row, col);
                         drawStair(g, row, col);
                     case RAIL ->
+                        // Rail.draw(row, col);
                         drawRail(g, row, col);
                     case DOOR ->
+                        // Door.draw(row, col);
                         drawDoor(g, row, col);
                     case STONE ->
+                        // Stone.draw(row, col);
                         drawStone(g, row, col);
                     case MOLTEN ->
+                        // Molten.draw(row, col);
                         drawMolten(g, row, col);
                     case BLANK ->
                         drawBlank(g, row, col);
@@ -321,7 +325,7 @@ public class GamePanel extends JPanel {
 
     private void drawBlank(Graphics g, int row, int col) {
 //        drawCellBackground(g, row, col);
-drawSprite(g, blankSprite, row, col);
+        drawSprite(g, blankSprite, row, col);
 
     }
 
@@ -368,7 +372,6 @@ drawSprite(g, blankSprite, row, col);
 //    private void drawRail(Graphics g, int row, int col) {
 //        drawEmoji(g, "—", row, col, new Color(134, 0, 179), font);
 //    }
-
     private void drawRail(Graphics g, int row, int col) {
 //        drawCellBackground(g, row, col);
         drawSprite(g, railSprite, row, col);
@@ -558,36 +561,58 @@ drawSprite(g, blankSprite, row, col);
         return new ImageIcon(path).getImage();
     }
 
-    private void createSpriteMap() {
-        JSONArray entities = new JSONArray(gameState.llegirJSON("entities"));
-        String sprite = "";
+    public static Map<String, List<String>> createSpriteMap() {
+        String jsonString = "";
+        try {
+            BufferedReader fitxer = new BufferedReader(new FileReader("resources/entities.json"));
+            try {
+                String line;
+
+                while ((line = fitxer.readLine()) != null) {
+                    jsonString += line;
+                }
+
+                fitxer.close();
+
+            } catch (IOException ex) {
+                System.out.println("Problema d'entrada i sortida");
+            }
+
+        } catch (FileNotFoundException ex) {
+            System.out.println("L'arxiu no s'ha trobat!");
+        }
+        Map<String, List<String>> spriteMap = new HashMap();
+        JSONArray entities = new JSONArray(jsonString);
         for (int i = 0; i < entities.length(); i++) {
             JSONObject obj = entities.getJSONObject(i);
-            String objType = obj.getString("type");
+            String type = "";
+            List<String> atributs = new ArrayList();
             try {
-                switch (objType) {
-                    case "tiles" -> {
-                        JSONArray tiles = obj.getJSONArray("tiles");
-                        for (int j = 0; j < tiles.length(); j++) {
-                            obj = (JSONObject) tiles.get(j);
-                            System.out.println("Type: " + obj.getString("type"));
-                            System.out.println("Sprite: " + obj.getString("sprite"));
-                            System.out.println("Color: " + obj.getString("color"));
-                            System.out.println("File name: " + obj.getString("filename"));
-                        }
-                    }
-                    case "player", "enemy" -> {
-                        System.out.println("Sprite: " + obj.getString("sprite"));
-                        System.out.println("Nom: " + obj.getString("name"));
-                        System.out.println("Color: " + obj.getString("color"));
-                        System.out.println("File name: " + obj.getString("filename"));
-                    }
-                }
+                type = obj.getString("type");
             } catch (JSONException e) {
-                System.out.println("No s'ha trobat cosa");
+                System.out.println("No s'ha trobat el tipus per l'element " + obj.toString());
             }
+            try {
+                String emoji = obj.getString("sprite");
+                atributs.add(emoji);
+            } catch (JSONException e) {
+                System.out.println("No s'ha trobat Emoji per l'element " + obj.toString());
+            }
+            try {
+                String colorString = obj.getString("color");
+                atributs.add(colorString);
+            } catch (JSONException e) {
+                System.out.println("No s'ha trobat Color per l'element " + obj.toString());
+            }
+            try {
+                String fileString = obj.getString("filename");
+                atributs.add(fileString);
+            } catch (JSONException e) {
+                System.out.println("No s'ha trobat Arxiu per l'element" + obj.toString());
+            }
+            spriteMap.put(type, atributs);
         }
-
+        return spriteMap;
     }
 
     private void loadSprites() {

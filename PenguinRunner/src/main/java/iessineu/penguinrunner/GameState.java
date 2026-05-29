@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -28,9 +29,8 @@ import iessineu.penguinrunner.Blocks.Molten;
 import iessineu.penguinrunner.Blocks.Rail;
 import iessineu.penguinrunner.Blocks.Stone;
 import iessineu.penguinrunner.Blocks.TileType;
-import iessineu.penguinrunner.Blocks.Wall;
 import iessineu.penguinrunner.Entity.Enemy;
-import iessineu.penguinrunner.Entity.Map;
+import iessineu.penguinrunner.Entity.GameMap;
 import iessineu.penguinrunner.Entity.Player;
 import iessineu.penguinrunner.Movement.Direction;
 import iessineu.penguinrunner.States.ClimbingState;
@@ -44,8 +44,8 @@ public class GameState implements Serializable {
     private final List<BrokenBlock> brokenBlocks = new ArrayList<>();
     private final List<Stone> stones = new ArrayList<>();
 
-    private final List<Map> mapList = llegirMapes();
-    private Map mapObject = mapList.get(0);
+    private final List<GameMap> mapList = llegirMapes();
+    private GameMap mapObject = mapList.get(0);
     private Player player;
     private List<Enemy> enemies;
     private Block[][] blocks = loadMap();
@@ -64,56 +64,95 @@ public class GameState implements Serializable {
         String[] level = mapObject.getMap();
         blocks = new Block[level.length][level[0].length()];
         enemies = new ArrayList();
+        Map<String, List<String>> mapaSprites = GamePanel.createSpriteMap();
+        System.out.println(mapaSprites.toString());
         player = null;
         startPlayerRow = 0;
         startPlayerCol = 0;
         for (int row = 0; row < level.length; row++) {
             for (int col = 0; col < level[row].length(); col++) {
                 char symbol = level[row].charAt(col);
-
                 switch (symbol) {
                     case '#' -> {
-                        blocks[row][col] = new Wall(row, col);
+                        // blocks[row][col] = new Wall(row, col);
+                        List<String> atr = mapaSprites.get("wall");
+                        blocks[row][col] = new Block(row, col, TileType.WALL);
+                        blocks[row][col].setEmoji(atr.get(0));
+                        blocks[row][col].setColorFromHex(atr.get(1));
+                        blocks[row][col].setSprite(atr.get(2));
                     }
                     case '.' -> {
-                        blocks[row][col] = new Ice(row, col);
+                        blocks[row][col] = new Block(row, col, TileType.ICE);
+                        List<String> atr = mapaSprites.get("ice");
+                        blocks[row][col].setEmoji(atr.get(0));
+                        blocks[row][col].setColorFromHex(atr.get(1));
+                        blocks[row][col].setSprite(atr.get(2));
                     }
                     case 'G' -> {
                         blocks[row][col] = new IceCream(row, col);
                         iceCream++;
+                        // atr = mapaSprites.get("icecream");
+                        // IceCream.setEmoji(atr.get(0));
+                        // IceCream.setColorFromHex(atr.get(1));
+                        // IceCream.setSprite(atr.get(2));
                     }
                     case 'H' -> {
                         blocks[row][col] = new Ladder(row, col);
+                        // List<String> atr = new ArrayList();
+                        // atr = mapaSprites.get("stair");
+                        // Ladder.setEmoji(atr.get(0));
+                        // Ladder.setColorFromHex(atr.get(1));
+                        // Ladder.setSprite(atr.get(2));
                     }
                     case '-' -> {
                         blocks[row][col] = new Rail(row, col);
+                        // atr = mapaSprites.get("rail");
+                        // Rail.setEmoji(atr.get(0));
+                        // Rail.setColorFromHex(atr.get(1));
+                        // Rail.setSprite(atr.get(2));
                     }
                     case 'D' -> {
                         blocks[row][col] = new Door(row, col);
+                        // atr = mapaSprites.get("door");
+                        // Door.setEmoji(atr.get(0));
+                        // Door.setColorFromHex(atr.get(1));
+                        // Door.setSprite(atr.get(2));
                     }
                     case 'S' -> {
                         Stone stone = new Stone(row, col);
                         blocks[row][col] = stone;
                         stones.add(stone);
+                        // atr = mapaSprites.get("stone");
+                        // Stone.setEmoji(atr.get(0));
+                        // Stone.setColorFromHex(atr.get(1));
+                        // Stone.setSprite(atr.get(2));
                     }
                     case 'P' -> {
                         player = new Player(row, col);
                         startPlayerRow = row;
                         startPlayerCol = col;
                         blocks[row][col] = null;
+                        // atr = mapaSprites.get("player");
+                        // Player.setEmoji(atr.get(0));
+                        // Player.setColorFromHex(atr.get(1));
+                        // Player.setSprite(atr.get(2));
                     }
                     case 'E' -> {
                         enemies.add(new Enemy(row, col, 1, 1));
                         blocks[row][col] = null;
+                        // atr = mapaSprites.get("enemy");
+                        // Enemy.setEmoji(atr.get(0));
+                        // Enemy.setColorFromHex(atr.get(1));
+                        // Enemy.setSprite(atr.get(2));
                     }
                     default -> {
-                        blocks[row][col] = null;
+                        blocks[row][col] = new Block(row, col, TileType.BLANK);
                     }
                 }
             }
         }
 
-        updatePlayerState();
+        // updatePlayerState();
         return blocks;
     }
 
@@ -590,10 +629,10 @@ public class GameState implements Serializable {
     /*
      * LECTURA MAPES
      */
-    public List<Map> llegirMapes() {
+    public List<GameMap> llegirMapes() {
 
         JSONArray maps = new JSONArray(llegirJSON("maps"));
-        List<Map> mapList = new ArrayList<>();
+        List<GameMap> mapList = new ArrayList<>();
 
         for (int i = 0; i < maps.length(); i++) {
             JSONObject obj = maps.getJSONObject(i);
@@ -605,7 +644,7 @@ public class GameState implements Serializable {
                 view[j] = jsonView.getString(j);
             }
 
-            mapList.add(new Map(obj.getInt("level"), view));
+            mapList.add(new GameMap(obj.getInt("level"), view));
         }
 
         return mapList;

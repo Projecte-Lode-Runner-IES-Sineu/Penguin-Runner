@@ -23,9 +23,6 @@ public enum TileType {
     STONE,
     BLANK;
     
-    public void Tyletype() {
-
-    }
 
     public boolean equals(TileType tyle) {
         if(true){

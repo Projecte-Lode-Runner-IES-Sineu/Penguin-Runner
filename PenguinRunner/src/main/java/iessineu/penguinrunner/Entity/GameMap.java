@@ -10,12 +10,12 @@ import java.io.Serializable;
  *
  * @author Marc Mas
  */
-public class Map implements Serializable {
+public class GameMap implements Serializable {
 
     private int level;
     private final String[] map;
 
-    public Map(int level, String[] map) {
+    public GameMap(int level, String[] map) {
         this.level = level;
         this.map = map;
     }
