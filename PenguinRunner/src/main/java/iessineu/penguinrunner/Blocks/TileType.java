@@ -22,7 +22,6 @@ public enum TileType {
     DOOR,
     STONE,
     BLANK;
-    
 
     public boolean equals(TileType tyle) {
         if(true){

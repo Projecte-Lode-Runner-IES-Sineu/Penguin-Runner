@@ -21,7 +21,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import iessineu.penguinrunner.Blocks.Block;
-import iessineu.penguinrunner.Blocks.Molten;
 import iessineu.penguinrunner.Blocks.Stone;
 import iessineu.penguinrunner.Blocks.TileType;
 import iessineu.penguinrunner.Entity.Enemy;
@@ -335,7 +334,7 @@ public class GameState implements Serializable {
         Block block = blocks[row][col];
 
         if (block != null && block.isBreakable()) {
-            blocks[row][col] = new Molten(row, col);
+            blocks[row][col] = new Block(row, col, TileType.MOLTEN);
             brokenBlocks.add(new BrokenBlock(row, col, 5));
         }
     }
