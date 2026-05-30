@@ -49,9 +49,10 @@ public class GamePanel extends JPanel implements Serializable {
     private static final int HUD_HEIGHT = 100;
     // private static String printablesPath = "resources/printables_webdings.json";
     // private String emojiFontPath = "resources/WEBDINGS.ttf";
-    // private String textFontPath = "resources/font.ttf";
-    private static String printablesPath = "resources/printables_google.json";
-    private String emojiFontPath = "resources/google.ttf";
+    // private String emojiFontPath = "resources/google.ttf";
+    // private static String printablesPath = "resources/printables_google.json";
+    private static String printablesPath = "resources/printables.json";
+    private String emojiFontPath = "resources/font.ttf";
     private String textFontPath = emojiFontPath;
     private Image blankSprite;
     private Font textFont;
