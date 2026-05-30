@@ -4,7 +4,6 @@
  */
 package iessineu.penguinrunner;
 
-import iessineu.penguinrunner.Blocks.Block;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -42,6 +41,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import iessineu.penguinrunner.Blocks.Block;
 import iessineu.penguinrunner.Blocks.TileType;
 import iessineu.penguinrunner.Entity.Enemy;
 import iessineu.penguinrunner.Entity.Player;
@@ -51,6 +51,7 @@ public class GamePanel extends JPanel {
 
     public static final int TILE_SIZE = 43;
     private static final int HUD_HEIGHT = 100;
+    private static String printablesPath = "resources/printables.json";
     private Image iceSprite;
     private Image iceCreamSprite;
     private Image stairsSprite;
@@ -59,18 +60,18 @@ public class GamePanel extends JPanel {
     private Image railSprite;
     private Font font;
     private final SoundManager soundManager = new SoundManager();
-    private GameState gameState;
+    private GameState gameState = new GameState();
 
-    Block mapa[][];
+    Block mapa[][] = gameState.loadMap();
 
     public GamePanel() {
         soundManager.playMusic("resources/music.wav");
         soundManager.setVolume(0.7f);
-        gameState = new GameState();
+        // gameState = new GameState();
         loadFont();
-        loadSprites();
+        createSpriteMap();
         Printable.setFont(font);
-        mapa = gameState.loadMap();
+        // mapa = gameState.loadMap();
 
         int width = gameState.getCols() * TILE_SIZE;
         int height = gameState.getRows() * TILE_SIZE;
@@ -284,39 +285,41 @@ public class GamePanel extends JPanel {
             for (int col = 0; col < gameState.getCols(); col++) {
                 TileType tile = gameState.getTile(row, col);
                 switch (tile) {
-                    case WALL -> {
-                        drawWall(g, row, col);
+                    case WALL, ICE, ICECREAM, MOLTEN, STAIR, RAIL, DOOR, STONE -> {
+                        Block b = mapa[row][col];
+                        b.draw(row, col);
+                        // drawWall(g, row, col);
                         // Block bloc = mapa[row][col];
                         // bloc.draw(row, col);
                         // Wall.draw(row, col);
                     }
-                    case ICE -> {
-                        drawIce(g, row, col);
-                        // Block bloc = mapa[row][col];
-                        // bloc.draw(row, col);
-                        // Ice.draw(row, col);
-                        // drawIce(g, row, col);
-                        // System.out.println(Ice.getEmoji());
-                        // System.out.println(Ice.getColorPrintable());
-                    }
-                    case ICECREAM ->
-                        // IceCream.draw(row, col);
-                        drawIceCream(g, row, col);
-                    case STAIR ->
-                        // Ladder.draw(row, col);
-                        drawStair(g, row, col);
-                    case RAIL ->
-                        // Rail.draw(row, col);
-                        drawRail(g, row, col);
-                    case DOOR ->
-                        // Door.draw(row, col);
-                        drawDoor(g, row, col);
-                    case STONE ->
-                        // Stone.draw(row, col);
-                        drawStone(g, row, col);
-                    case MOLTEN ->
-                        // Molten.draw(row, col);
-                        drawMolten(g, row, col);
+                    // case ICE -> {
+                    //     drawIce(g, row, col);
+                    //     // Block bloc = mapa[row][col];
+                    //     // bloc.draw(row, col);
+                    //     // Ice.draw(row, col);
+                    //     // drawIce(g, row, col);
+                    //     // System.out.println(Ice.getEmoji());
+                    //     // System.out.println(Ice.getColorPrintable());
+                    // }
+                    // case ICECREAM ->
+                    //     // IceCream.draw(row, col);
+                    //     drawIceCream(g, row, col);
+                    // case STAIR ->
+                    //     // Ladder.draw(row, col);
+                    //     drawStair(g, row, col);
+                    // case RAIL ->
+                    //     // Rail.draw(row, col);
+                    //     drawRail(g, row, col);
+                    // case DOOR ->
+                    //     // Door.draw(row, col);
+                    //     drawDoor(g, row, col);
+                    // case STONE ->
+                    //     // Stone.draw(row, col);
+                    //     drawStone(g, row, col);
+                    // case MOLTEN ->
+                    //     // Molten.draw(row, col);
+                    //     drawMolten(g, row, col);
                     case BLANK ->
                         drawBlank(g, row, col);
                     default -> {
@@ -333,65 +336,55 @@ public class GamePanel extends JPanel {
 
     }
 
-    /*
-     * Dibuixa una paret.
-     */
-    private void drawWall(Graphics g, int row, int col) {
-//        drawCellBackground(g, row, col, new Color(38, 38, 38));
-        drawEmoji(g, "🧱", row, col, new Color(70, 70, 80), font);
-    }
-
-    private void drawStone(Graphics g, int row, int col) {
-//        drawCellBackground(g, row, col, new Color(102, 51, 0));
-        drawEmoji(g, "🧱", row, col, new Color(153, 77, 0), font);
-    }
-
-    /*
-     * Dibuixa una casella de gel.
-     */
-    private void drawIce(Graphics g, int row, int col) {
-//        drawCellBackground(g, row, col, new Color(102, 179, 255));
-        drawSprite(g, iceSprite, row, col);
-    }
-
-    /*
-     * Dibuixa una casella amb gelat.
-     */
-    private void drawIceCream(Graphics g, int row, int col) {
-//        drawCellBackground(g, row, col);
-        drawSprite(g, iceCreamSprite, row, col);
-    }
-
-    /*
-     * Dibuixa una casella amb escala.
-     */
-    private void drawStair(Graphics g, int row, int col) {
-
-        drawSprite(g, stairsSprite, row, col);
-    }
-
-    /*
-     * Dibuixa una casella amb pasarela.
-     */
-//    private void drawRail(Graphics g, int row, int col) {
-//        drawEmoji(g, "—", row, col, new Color(134, 0, 179), font);
-//    }
-    private void drawRail(Graphics g, int row, int col) {
-//        drawCellBackground(g, row, col);
-        drawSprite(g, railSprite, row, col);
-    }
-
-    private void drawDoor(Graphics g, int row, int col) {
-//        drawCellBackground(g, row, col);
-        drawEmoji(g, "🚪", row, col, new Color(128, 64, 0), font);
-    }
-
-    private void drawMolten(Graphics g, int row, int col) {
-//        drawCellBackground(g, row, col, new Color(35, 10, 10));
-        drawEmoji(g, "🕳️", row, col, null, font);
-    }
-
-
+//     /*
+//      * Dibuixa una paret.
+//      */
+//     private void drawWall(Graphics g, int row, int col) {
+// //        drawCellBackground(g, row, col, new Color(38, 38, 38));
+//         drawEmoji(g, "🧱", row, col, new Color(70, 70, 80), font);
+//     }
+//     private void drawStone(Graphics g, int row, int col) {
+// //        drawCellBackground(g, row, col, new Color(102, 51, 0));
+//         drawEmoji(g, "🧱", row, col, new Color(153, 77, 0), font);
+//     }
+//     /*
+//      * Dibuixa una casella de gel.
+//      */
+//     private void drawIce(Graphics g, int row, int col) {
+// //        drawCellBackground(g, row, col, new Color(102, 179, 255));
+//         drawSprite(g, iceSprite, row, col);
+//     }
+//     /*
+//      * Dibuixa una casella amb gelat.
+//      */
+//     private void drawIceCream(Graphics g, int row, int col) {
+// //        drawCellBackground(g, row, col);
+//         drawSprite(g, iceCreamSprite, row, col);
+//     }
+//     /*
+//      * Dibuixa una casella amb escala.
+//      */
+//     private void drawStair(Graphics g, int row, int col) {
+//         drawSprite(g, stairsSprite, row, col);
+//     }
+//     /*
+//      * Dibuixa una casella amb pasarela.
+//      */
+// //    private void drawRail(Graphics g, int row, int col) {
+// //        drawEmoji(g, "—", row, col, new Color(134, 0, 179), font);
+// //    }
+//     private void drawRail(Graphics g, int row, int col) {
+// //        drawCellBackground(g, row, col);
+//         drawSprite(g, railSprite, row, col);
+//     }
+//     private void drawDoor(Graphics g, int row, int col) {
+// //        drawCellBackground(g, row, col);
+//         drawEmoji(g, "🚪", row, col, new Color(128, 64, 0), font);
+//     }
+//     private void drawMolten(Graphics g, int row, int col) {
+// //        drawCellBackground(g, row, col, new Color(35, 10, 10));
+//         drawEmoji(g, "🕳️", row, col, null, font);
+//     }
     /*
      * Fons i quadrícula d'una casella.
      */
@@ -423,9 +416,9 @@ public class GamePanel extends JPanel {
      */
     private void drawPlayer(Graphics g) {
         Player player = gameState.getPlayer();
+        player.draw(player.getRow(), player.getCol());
 
-        drawSprite(g, playerSprite, player.getRow(), player.getCol());
-
+        // drawSprite(g, playerSprite, player.getRow(), player.getCol());
     }
 
     /*
@@ -568,7 +561,7 @@ public class GamePanel extends JPanel {
     public static Map<String, List<String>> createSpriteMap() {
         String jsonString = "";
         try {
-            BufferedReader fitxer = new BufferedReader(new FileReader("resources/entities.json"));
+            BufferedReader fitxer = new BufferedReader(new FileReader(printablesPath));
             try {
                 String line;
 
@@ -619,16 +612,16 @@ public class GamePanel extends JPanel {
         return spriteMap;
     }
 
-    private void loadSprites() {
-        createSpriteMap();
-        iceSprite = loadSprite("resources/sprites/ice.png");
-        iceCreamSprite = loadSprite("resources/sprites/iceCream.png");
-        stairsSprite = loadSprite("resources/sprites/stairs.png");
-        playerSprite = loadSprite("resources/sprites/player.png");
-        railSprite = loadSprite("resources/sprites/rail.png");
-        blankSprite = loadSprite("resources/sprites/blank.png");
-    }
-
+    // private void loadSprites() {
+    //     createSpriteMap();
+    //     iceSprite = loadSprite("resources/sprites/ice.png");
+    //     iceCreamSprite = loadSprite("resources/sprites/iceCream.png");
+    //     stairsSprite = loadSprite("resources/sprites/stairs.png");
+    //     playerSprite = loadSprite("resources/sprites/player.png");
+    //     railSprite = loadSprite("resources/sprites/rail.png");
+    //     blankSprite = loadSprite("resources/sprites/blank.png");
+    // }
+    
     private void drawSprite(Graphics g, Image image, int row, int col) {
         int x = col * TILE_SIZE;
         int y = row * TILE_SIZE;

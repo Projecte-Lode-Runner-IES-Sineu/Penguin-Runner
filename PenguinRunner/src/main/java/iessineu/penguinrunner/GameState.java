@@ -21,15 +21,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import iessineu.penguinrunner.Blocks.Block;
-import iessineu.penguinrunner.Blocks.Door;
-import iessineu.penguinrunner.Blocks.Ice;
-import iessineu.penguinrunner.Blocks.IceCream;
-import iessineu.penguinrunner.Blocks.Ladder;
 import iessineu.penguinrunner.Blocks.Molten;
-import iessineu.penguinrunner.Blocks.Rail;
 import iessineu.penguinrunner.Blocks.Stone;
 import iessineu.penguinrunner.Blocks.TileType;
-import iessineu.penguinrunner.Blocks.Wall;
 import iessineu.penguinrunner.Entity.Enemy;
 import iessineu.penguinrunner.Entity.GameMap;
 import iessineu.penguinrunner.Entity.Player;
@@ -44,8 +38,9 @@ public class GameState implements Serializable {
 
     private final List<BrokenBlock> brokenBlocks = new ArrayList<>();
     private final List<Stone> stones = new ArrayList<>();
-
-    private final List<GameMap> mapList = llegirMapes();
+    private String rutaMapes = "resources/maps.json";
+    private String rutaPrintables = "resources/printables.json";
+    private final List<GameMap> mapList = llegirMapes(rutaMapes);
     private GameMap mapObject = mapList.get(0);
     private Player player;
     private List<Enemy> enemies;
@@ -66,7 +61,6 @@ public class GameState implements Serializable {
         blocks = new Block[level.length][level[0].length()];
         enemies = new ArrayList();
         Map<String, List<String>> mapaSprites = GamePanel.createSpriteMap();
-        System.out.println(mapaSprites.toString());
         player = null;
         startPlayerRow = 0;
         startPlayerCol = 0;
@@ -75,87 +69,46 @@ public class GameState implements Serializable {
                 char symbol = level[row].charAt(col);
                 switch (symbol) {
                     case '#' -> {
-                        blocks[row][col] = new Wall(row, col);
-                        // blocks[row][col] = new Wall(row, col);
-                        // List<String> atr = mapaSprites.get("wall");
-                        // blocks[row][col] = new Block(row, col, TileType.WALL);
-                        // blocks[row][col].setEmoji(atr.get(0));
-                        // blocks[row][col].setColorFromHex(atr.get(1));
-                        // blocks[row][col].setSprite(atr.get(2));
+                        blocks[row][col] = new Block(row, col, TileType.WALL);
                     }
                     case '.' -> {
-                        blocks[row][col] = new Ice(row, col);
-                        // blocks[row][col] = new Block(row, col, TileType.ICE);
-                        // List<String> atr = mapaSprites.get("ice");
-                        // blocks[row][col].setEmoji(atr.get(0));
-                        // blocks[row][col].setColorFromHex(atr.get(1));
-                        // blocks[row][col].setSprite(atr.get(2));
+                        blocks[row][col] = new Block(row, col, TileType.ICE);
                     }
                     case 'G' -> {
-                        blocks[row][col] = new IceCream(row, col);
+                        blocks[row][col] = new Block(row, col, TileType.ICECREAM);
                         iceCream++;
-                        // atr = mapaSprites.get("icecream");
-                        // IceCream.setEmoji(atr.get(0));
-                        // IceCream.setColorFromHex(atr.get(1));
-                        // IceCream.setSprite(atr.get(2));
                     }
                     case 'H' -> {
-                        blocks[row][col] = new Ladder(row, col);
-                        // List<String> atr = new ArrayList();
-                        // atr = mapaSprites.get("stair");
-                        // Ladder.setEmoji(atr.get(0));
-                        // Ladder.setColorFromHex(atr.get(1));
-                        // Ladder.setSprite(atr.get(2));
+                        blocks[row][col] = new Block(row, col, TileType.STAIR);
                     }
                     case '-' -> {
-                        blocks[row][col] = new Rail(row, col);
-                        // atr = mapaSprites.get("rail");
-                        // Rail.setEmoji(atr.get(0));
-                        // Rail.setColorFromHex(atr.get(1));
-                        // Rail.setSprite(atr.get(2));
+                        blocks[row][col] = new Block(row, col, TileType.RAIL);
                     }
                     case 'D' -> {
-                        blocks[row][col] = new Door(row, col);
-                        // atr = mapaSprites.get("door");
-                        // Door.setEmoji(atr.get(0));
-                        // Door.setColorFromHex(atr.get(1));
-                        // Door.setSprite(atr.get(2));
+                        blocks[row][col] = new Block(row, col, TileType.DOOR);
                     }
                     case 'S' -> {
+                        blocks[row][col] = new Block(row, col, TileType.STONE);
                         Stone stone = new Stone(row, col);
                         blocks[row][col] = stone;
                         stones.add(stone);
-                        // atr = mapaSprites.get("stone");
-                        // Stone.setEmoji(atr.get(0));
-                        // Stone.setColorFromHex(atr.get(1));
-                        // Stone.setSprite(atr.get(2));
                     }
                     case 'P' -> {
                         player = new Player(row, col);
                         startPlayerRow = row;
                         startPlayerCol = col;
                         blocks[row][col] = null;
-                        // atr = mapaSprites.get("player");
-                        // Player.setEmoji(atr.get(0));
-                        // Player.setColorFromHex(atr.get(1));
-                        // Player.setSprite(atr.get(2));
                     }
                     case 'E' -> {
                         enemies.add(new Enemy(row, col, 1, 1));
                         blocks[row][col] = null;
-                        // atr = mapaSprites.get("enemy");
-                        // Enemy.setEmoji(atr.get(0));
-                        // Enemy.setColorFromHex(atr.get(1));
-                        // Enemy.setSprite(atr.get(2));
                     }
                     default -> {
-                        // blocks[row][col] = new Block(row, col, TileType.BLANK);
                         blocks[row][col] = null;
                     }
                 }
             }
         }
-
         updatePlayerState();
         return blocks;
     }
@@ -284,7 +237,7 @@ public class GameState implements Serializable {
     }
 
     private void moveBlocks() {
-        for (Stone stone : stones) {
+        for (Block stone : stones) {
             int row = stone.getRow();
             int col = stone.getCol();
 
@@ -351,7 +304,7 @@ public class GameState implements Serializable {
             block.turnsLeft--;
 
             if (block.turnsLeft <= 0) {
-                blocks[block.row][block.col] = new Ice(block.row, block.col);
+                blocks[block.row][block.col] = new Block(block.row, block.col, TileType.ICE);
                 brokenBlocks.remove(i);
             }
         }
@@ -633,9 +586,9 @@ public class GameState implements Serializable {
     /*
      * LECTURA MAPES
      */
-    public List<GameMap> llegirMapes() {
+    public List<GameMap> llegirMapes(String rutaMapes) {
 
-        JSONArray maps = new JSONArray(llegirJSON("maps"));
+        JSONArray maps = new JSONArray(llegirJSON(rutaMapes));
         List<GameMap> mapList = new ArrayList<>();
 
         for (int i = 0; i < maps.length(); i++) {
@@ -654,10 +607,10 @@ public class GameState implements Serializable {
         return mapList;
     }
 
-    public String llegirJSON(String nomArxiu) {
+    public String llegirJSON(String rutaArxiu) {
         String jsonString = "";
         try {
-            BufferedReader fitxer = new BufferedReader(new FileReader("resources/" + nomArxiu + ".json"));
+            BufferedReader fitxer = new BufferedReader(new FileReader(rutaArxiu));
             try {
                 String line;
 
@@ -680,4 +633,5 @@ public class GameState implements Serializable {
     public int getIceCream() {
         return iceCream;
     }
+
 }

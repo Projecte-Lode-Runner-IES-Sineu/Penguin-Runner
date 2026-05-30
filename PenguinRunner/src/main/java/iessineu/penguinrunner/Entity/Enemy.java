@@ -6,7 +6,10 @@ package iessineu.penguinrunner.Entity;
 
 import java.awt.Color;
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
+import iessineu.penguinrunner.GamePanel;
 import iessineu.penguinrunner.Printable;
 
 /**
@@ -36,6 +39,7 @@ public class Enemy extends Printable implements Serializable {
         originalCol = this.col = col;
         this.respawnRow = respawnRow;
         this.respawnCol = respawnCol;
+        this.setPrintables();
     }
 
     public int getRow() {
@@ -95,6 +99,14 @@ public class Enemy extends Printable implements Serializable {
 
     public Color getColor() {
         return new Color(26, 140, 255);
+    }
+
+    public void setPrintables() {
+        Map<String, List<String>> mapaSprites = GamePanel.createSpriteMap();
+        List<String> atributs = mapaSprites.get("enemy");
+        this.setEmoji(atributs.get(0));
+        this.setColorFromHex(atributs.get(1));
+        this.setSprite(atributs.get(2));
     }
 
 }

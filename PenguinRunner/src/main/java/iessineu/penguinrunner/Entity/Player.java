@@ -6,7 +6,10 @@ package iessineu.penguinrunner.Entity;
 
 import java.awt.Color;
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
+import iessineu.penguinrunner.GamePanel;
 import iessineu.penguinrunner.Printable;
 import iessineu.penguinrunner.States.PlayerState;
 import iessineu.penguinrunner.States.WalkingState;
@@ -25,7 +28,6 @@ import iessineu.penguinrunner.States.WalkingState;
  *
  * No guardem x/y en píxels perquè això és només per dibuixar.
  */
-
 public class Player extends Printable implements Serializable {
 
     private int row;
@@ -46,6 +48,7 @@ public class Player extends Printable implements Serializable {
         this.originalCol = col;
 
         this.state = new WalkingState();
+        this.setPrintables();
     }
 
     public int getRow() {
@@ -85,14 +88,24 @@ public class Player extends Printable implements Serializable {
     public PlayerState getState() {
         return state;
     }
+
     public String getAvatar() {
         return "🐧";
     }
+
     public Color getColor() {
         return new Color(102, 153, 255);
     }
 
     public void setState(PlayerState state) {
         this.state = state;
+    }
+
+    public void setPrintables() {
+        Map<String, List<String>> mapaSprites = GamePanel.createSpriteMap();
+        List<String> atributs = mapaSprites.get("player");
+        this.setEmoji(atributs.get(0));
+        this.setColorFromHex(atributs.get(1));
+        this.setSprite(atributs.get(2));
     }
 }

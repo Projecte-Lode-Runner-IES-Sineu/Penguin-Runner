@@ -26,9 +26,14 @@
     {
         "type": "wall",
         "sprite": "🧱",
-        "color": "#FFFF00",
-        "color2": "#464650",
+        "color": "#464650",
         "filename": "wall.png"
+    },
+    {
+        "type": "molten",
+        "sprite": "🕳️",
+        "color": "#230a0a",
+        "filename": "molten.png"
     },
     {
         "type": "stone",
