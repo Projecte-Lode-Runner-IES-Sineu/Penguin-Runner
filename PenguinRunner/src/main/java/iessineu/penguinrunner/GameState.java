@@ -21,7 +21,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import iessineu.penguinrunner.Blocks.Block;
-import iessineu.penguinrunner.Blocks.Stone;
 import iessineu.penguinrunner.Blocks.TileType;
 import iessineu.penguinrunner.Entity.Enemy;
 import iessineu.penguinrunner.Entity.GameMap;
@@ -36,7 +35,7 @@ import iessineu.penguinrunner.States.WalkingState;
 public class GameState implements Serializable {
 
     private List<BrokenBlock> brokenBlocks;
-    private List<Stone> stones;
+    private List<Block> stones;
     private String rutaMapes = "resources/maps.json";
     private final Map<String, List<String>> mapaSprites = GamePanel.createSpriteMap();
     private int nivellActual = 0;
@@ -94,9 +93,7 @@ public class GameState implements Serializable {
                     }
                     case 'S' -> {
                         blocks[row][col] = new Block(row, col, TileType.STONE);
-                        Stone stone = new Stone(row, col);
-                        blocks[row][col] = stone;
-                        stones.add(stone);
+                        stones.add(blocks[row][col]);
                     }
                     case 'P' -> {
                         player = new Player(row, col);
@@ -124,15 +121,16 @@ public class GameState implements Serializable {
         loadMap();
         Block[][] mapa = getBlocks();
         player = new Player(player.getRow(), player.getCol());
-        List<Stone> newStoneList = new ArrayList();
+        // List<Stone> newStoneList = new ArrayList();
+        List<Block> newStoneList = new ArrayList();
         Block[][] mapaNou = new Block[mapa.length][mapa[0].length];
-        for (Stone stone : stones) {
+        for (Block stone : stones) {
             mapaNou[stone.getRow()][stone.getCol()] = new Block(stone.getRow(), stone.getCol(), TileType.STONE);
-            mapaNou[stone.getRow()][stone.getCol()] = stone;
             newStoneList.add(stone);
         }
         List<Enemy> newEnemyList = new ArrayList();
         stones = newStoneList;
+        // stones = newStoneList;
         for (Enemy enem : getEnemies()) {
             enem = new Enemy(enem.getRow(), enem.getCol(), enem.getRespawnCol(), enem.getRespawnRow());
             newEnemyList.add(enem);
@@ -162,11 +160,11 @@ public class GameState implements Serializable {
         long delta = System.currentTimeMillis() - lastTurn;
         if (player.getState() == fallingState) {
             // if (delta > 50) {
-                lastTurn = System.currentTimeMillis();
-                movePlayerDownOne();
-                updatePlayerState();
-                finishTurn();
-                takeTurn();
+            lastTurn = System.currentTimeMillis();
+            movePlayerDownOne();
+            updatePlayerState();
+            finishTurn();
+            takeTurn();
             // }
         } else if (direction != null) {
             player.getState().handleInput(this, direction);
@@ -472,7 +470,7 @@ public class GameState implements Serializable {
     private void resetPositions() {
         player.setPosition(startPlayerRow, startPlayerCol);
 
-        for (Stone stone : stones) {
+        for (Block stone : stones) {
             blocks[stone.getRow()][stone.getCol()] = null;
 
             stone.moveToOriginalPosition();
@@ -606,7 +604,7 @@ public class GameState implements Serializable {
     }
 
     void interact() {
-        Block bloc = blocks[player.getRow()][player.getCol()]; 
+        Block bloc = blocks[player.getRow()][player.getCol()];
         if (bloc != null && bloc.getType() == TileType.DOOR) {
             System.out.println("Porta");
             nivellActual++;
@@ -621,7 +619,7 @@ public class GameState implements Serializable {
         return nivellActual;
     }
 
-    public List<Stone> getStones() {
+    public List<Block> getStones() {
         return stones;
     }
 
@@ -633,7 +631,7 @@ public class GameState implements Serializable {
         this.brokenBlocks = brokenBlocks;
     }
 
-    public void setStones(List<Stone> stones) {
+    public void setStones(List<Block> stones) {
         this.stones = stones;
     }
 
