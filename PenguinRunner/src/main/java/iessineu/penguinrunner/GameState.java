@@ -121,7 +121,6 @@ public class GameState implements Serializable {
         loadMap();
         Block[][] mapa = getBlocks();
         player = new Player(player.getRow(), player.getCol());
-        // List<Stone> newStoneList = new ArrayList();
         List<Block> newStoneList = new ArrayList();
         Block[][] mapaNou = new Block[mapa.length][mapa[0].length];
         for (Block stone : stones) {
@@ -136,9 +135,6 @@ public class GameState implements Serializable {
             newEnemyList.add(enem);
         }
         enemies = newEnemyList;
-        // for (BrokenBlock broken : brokenList) {
-        //     mapaNou[broken.row][broken.col] = broken;
-        // }
         for (int row = 0; row < mapa.length; row++) {
             for (int col = 0; col < mapa[row].length; col++) {
                 Block blocAntic = mapa[row][col];
