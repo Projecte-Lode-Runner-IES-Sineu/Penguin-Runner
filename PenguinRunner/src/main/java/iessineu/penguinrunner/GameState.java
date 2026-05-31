@@ -120,21 +120,8 @@ public class GameState implements Serializable {
         mapObject = mapList.get(nivellActual);
         loadMap();
         Block[][] mapa = getBlocks();
-        player = new Player(player.getRow(), player.getCol());
         List<Block> newStoneList = new ArrayList();
         Block[][] mapaNou = new Block[mapa.length][mapa[0].length];
-        for (Block stone : stones) {
-            mapaNou[stone.getRow()][stone.getCol()] = new Block(stone.getRow(), stone.getCol(), TileType.STONE);
-            newStoneList.add(stone);
-        }
-        List<Enemy> newEnemyList = new ArrayList();
-        stones = newStoneList;
-        // stones = newStoneList;
-        for (Enemy enem : getEnemies()) {
-            enem = new Enemy(enem.getRow(), enem.getCol(), enem.getRespawnCol(), enem.getRespawnRow());
-            newEnemyList.add(enem);
-        }
-        enemies = newEnemyList;
         for (int row = 0; row < mapa.length; row++) {
             for (int col = 0; col < mapa[row].length; col++) {
                 Block blocAntic = mapa[row][col];
@@ -142,9 +129,20 @@ public class GameState implements Serializable {
                     mapaNou[row][col] = null;
                 } else {
                     mapaNou[row][col] = new Block(blocAntic.getRow(), blocAntic.getCol(), blocAntic.getType());
+                    if (blocAntic.getType() == TileType.STONE) {
+                        newStoneList.add(mapaNou[row][col]);
+                    }
                 }
             }
         }
+        List<Enemy> newEnemyList = new ArrayList();
+        for (Enemy enemy : getEnemies()) {
+            enemy = new Enemy(enemy.getRow(), enemy.getCol(), enemy.getRespawnCol(), enemy.getRespawnRow());
+            newEnemyList.add(enemy);
+        }
+        enemies = newEnemyList;
+        player = new Player(player.getRow(), player.getCol());
+        stones = newStoneList;
         blocks = mapaNou;
         updatePlayerState();
     }
